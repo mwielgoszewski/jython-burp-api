@@ -8,6 +8,7 @@ This module contains the primary objects that make working with
 Burp's IHttpRequestResponse object's more... Pythonic.
 '''
 import java.lang
+from Cookie import SimpleCookie
 from cgi import parse_qs
 from urlparse import urlparse
 
@@ -38,7 +39,7 @@ class HttpRequest(object):
         self.url = None
         self.version = None
         self.headers = CaseInsensitiveDict()
-        self.cookies = {}
+        self.cookies = SimpleCookie()
         self.body = None
         self.response = None
 
@@ -51,6 +52,7 @@ class HttpRequest(object):
             _parse_message(self._request)
 
         self.parameters = _parse_parameters(self)
+        self.cookies.load(self.headers.get('cookie', ''))
 
         self.response = HttpResponse(getattr(messageInfo, 'response', None),
                                      request=self)
@@ -127,7 +129,7 @@ class HttpResponse(object):
         self.reason = None
         self.encoding = None
         self.headers = CaseInsensitiveDict()
-        self.cookies = {}
+        self.cookies = SimpleCookie()
         self.body = None
 
         if messageInfo is not None:
@@ -135,6 +137,7 @@ class HttpResponse(object):
             self.version, self.status_code, self.reason, self.headers, self.body = \
                 _parse_message(self._response)
 
+        self.cookies.load(self.headers.get('set-cookie', ''))
 
     def __len__(self):
         return int(self.headers.get('content-length', len(self.body or '')))
