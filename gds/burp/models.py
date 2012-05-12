@@ -8,6 +8,7 @@ This module contains the primary objects that make working with
 Burp's IHttpRequestResponse object's more... Pythonic.
 '''
 import java.lang
+from cgi import parse_qs
 from urlparse import urlparse
 
 from .structures import CaseInsensitiveDict
@@ -48,6 +49,8 @@ class HttpRequest(object):
 
         self.method, self._uri, self.version, self.headers, self.body = \
             _parse_message(self._request)
+
+        self.parameters = _parse_parameters(self)
 
         self.response = HttpResponse(getattr(messageInfo, 'response', None),
                                      request=self)
@@ -212,3 +215,31 @@ def _parse_message(message):
         return method, int(uri), http_v, headers, body
     else:
         return method, uri, http_v, headers, body
+
+
+def _parse_parameters(request):
+    parameters = {}
+
+    parameters['query'] = parse_qs(request.url.query, keep_blank_values=True)
+
+    _type = request.headers.get('content-type')
+
+    if _type == 'application/x-www-form-urlencoded':
+        parameters['body'] = parse_qs(request.body, keep_blank_values=True)
+
+    elif _type in ('application/json', ):
+        try:
+            parameters['body'] = json.loads(body)
+        except TypeError:
+            pass
+
+    elif _type == 'application/x-amf':
+        pass
+
+    elif _type == 'text/x-gwt-rpc':
+        pass
+
+    elif _type == 'application/xml':
+        pass
+
+    return parameters
