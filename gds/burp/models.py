@@ -119,6 +119,7 @@ class HttpRequest(object):
 
 class HttpResponse(object):
     def __init__(self, messageInfo, request=None):
+        self._response = None
         self.request = request
 
         self.version = None
@@ -129,12 +130,10 @@ class HttpResponse(object):
         self.cookies = {}
         self.body = None
 
-        if messageInfo is not None and hasattr(messageInfo, 'response'):
-            self._response = messageInfo.getResponse().tostring()
+        if messageInfo is not None:
+            self._response = messageInfo.tostring()
             self.version, self.status_code, self.reason, self.headers, self.body = \
-                _parse_message(messageInfo.getResponse().tostring())
-
-        self._messageInfo = messageInfo
+                _parse_message(self._response)
 
 
     def __len__(self):
