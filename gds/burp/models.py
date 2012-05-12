@@ -49,8 +49,8 @@ class HttpRequest(object):
         self.method, self._uri, self.version, self.headers, self.body = \
             _parse_message(self._request)
 
-        if hasattr(messageInfo, 'response'):
-            self.response = HttpResponse(messageInfo, request=self)
+        self.response = HttpResponse(getattr(messageInfo, 'response', None),
+                                     request=self)
 
 
     def __len__(self):
@@ -126,7 +126,7 @@ class HttpResponse(object):
         self.cookies = {}
         self.body = None
 
-        if messageInfo.getResponse():
+        if messageInfo is not None and hasattr(messageInfo, 'response'):
             self._response = messageInfo.getResponse().tostring()
             self.version, self.status_code, self.reason, self.headers, self.body = \
                 _parse_message(messageInfo.getResponse().tostring())
