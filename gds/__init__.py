@@ -7,5 +7,3 @@ gds
 :license: ISC, see LICENSE for more details.
 
 '''
-
-from . import burp
