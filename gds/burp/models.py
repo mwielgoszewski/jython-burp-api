@@ -193,10 +193,17 @@ def _parse_message(message):
     method, uri, http_v = request_line.split(SP, 2)
 
     headers = CaseInsensitiveDict()
+
     for request_header in request_headers.split(CRLF):
         header, value = request_header.split(':', 1)
         header = header.strip()
         value = value.strip()
+
+        has_value = headers.get(header)
+
+        if has_value and has_value != value:
+            value = ', '.join([has_value, value])
+
         headers[header] = value
 
     # if this is a Response object, it'll be:
