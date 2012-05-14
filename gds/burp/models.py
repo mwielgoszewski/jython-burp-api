@@ -118,6 +118,8 @@ class HttpRequest(object):
         except java.lang.Exception:
             print '[*] Could not set comment %s' % (comment,)
 
+        return
+
 
 class HttpResponse(object):
     def __init__(self, messageInfo, request=None):
@@ -181,15 +183,11 @@ class HttpResponse(object):
         :param append: if True, append comment to existing comment if any.
         '''
         try:
-            if append is True:
-                _comment = self._messageInfo.getComment()
-                if _comment:
-                    comment = '%s, %s' % (_comment, comment)
-                self._messageInfo.setComment(comment)
-            else:
-                self._messageInfo.setComment(comment)
-        except java.lang.Exception:
-            print '[*] Could not set comment %s' % (comment,)
+            self.request.add_comment(comment, append=append)
+        except java.lang.Exception, reason:
+            print '[*] Could not set comment %s: %s' % (comment, reason,)
+
+        return
 
 
 def _parse_message(message):
@@ -231,8 +229,8 @@ def _parse_parameters(request):
 
     elif _type in ('application/json', ):
         try:
-            parameters['body'] = json.loads(body)
-        except TypeError:
+            parameters['body'] = json.loads(request.body)
+        except (NameError, TypeError):
             pass
 
     elif _type == 'application/x-amf':
