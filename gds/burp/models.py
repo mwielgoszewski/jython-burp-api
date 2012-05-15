@@ -118,6 +118,8 @@ class HttpRequest(object):
         except java.lang.Exception:
             print '[*] Could not set comment %s' % (comment,)
 
+        return
+
 
 class HttpResponse(object):
     def __init__(self, messageInfo, request=None):
@@ -181,42 +183,106 @@ class HttpResponse(object):
         :param append: if True, append comment to existing comment if any.
         '''
         try:
-            if append is True:
-                _comment = self._messageInfo.getComment()
-                if _comment:
-                    comment = '%s, %s' % (_comment, comment)
-                self._messageInfo.setComment(comment)
-            else:
-                self._messageInfo.setComment(comment)
-        except java.lang.Exception:
-            print '[*] Could not set comment %s' % (comment,)
+            self.request.add_comment(comment, append=append)
+        except java.lang.Exception, reason:
+            print '[*] Could not set comment %s: %s' % (comment, reason,)
+
+        return
 
 
 def _parse_message(message):
-    request, body = message.split(CRLF + CRLF, 1)
-    request_line, request_headers = request.split(CRLF, 1)
-    method, uri, http_v = request_line.split(SP, 2)
+    is_response = False
+    pos = idx = 0
+
+    idx = message.find(CRLF, pos)
+
+    if idx != -1:
+        start_line = message[pos:idx]
+
+        if start_line.startswith('HTTP/'):
+            is_response = True
+
+        _idx = start_line.find(SP)
+
+        if _idx != -1:
+            if is_response:
+                version = start_line[0:_idx]
+            else:
+                method = start_line[0:_idx]
+
+            _pos = _idx + 1
+
+        if is_response:
+            _idx = start_line.find(SP, _pos)
+
+            status = start_line[_pos:_idx]
+            if not status.isdigit():
+                raise ValueError('status code %r is not a number' % (status,))
+
+            status = int(status)
+
+            _pos = _idx + 1
+            reason = start_line[_pos:]
+
+        else:
+            # work out the http version by looking in reverse
+            _ridx = start_line.rfind(SP)
+            version = start_line[_ridx + 1:]
+            if not version.startswith('HTTP/'):
+                raise ValueError('Invalid HTTP version: %r' % (version,))
+
+            # request-uri will be everything in-between.
+            # some clients might not encode space into a plus or %20
+            uri = start_line[_pos:_ridx]
+            if not uri or uri.isspace():
+                raise ValueError('Invalid URI: %r' % (uri,))
+
+        pos = idx + 2
+    else:
+        raise ValueError('Could not parse start-line from message')
 
     headers = CaseInsensitiveDict()
 
-    for request_header in request_headers.split(CRLF):
-        header, value = request_header.split(':', 1)
-        header = header.strip()
-        value = value.strip()
+    while (idx != -1):
+        idx = message.find(CRLF, pos)
 
-        has_value = headers.get(header)
+        if idx == pos:
+            # we've reached the end of the request headers
+            # advance 4 bytes (2 * CRLF)
+            pos = idx + 2
+            break
 
-        if has_value and has_value != value:
-            value = ', '.join([has_value, value])
+        if idx != -1:
+            header = message[pos:idx]
+            _idx = header.find(':')
 
-        headers[header] = value
+            if _idx != -1:
+                name = header[:_idx].strip()
+                value = header[_idx+1:].strip()
 
-    # if this is a Response object, it'll be:
-    # version, status_code, reason, headers, body
-    if method.startswith('HTTP/1'):
-        return method, int(uri), http_v, headers, body
+                has_value = headers.get(name)
+
+                if has_value and has_value != value:
+                    value = ', '.join([has_value, value])
+
+                headers[name] = value
+            else:
+                raise ValueError('Error parsing header: %r' % (header,))
+
+            pos = idx + 2
+        else:
+            # looks like we reached the end of the message before EOL
+            break
+
+    if idx < len(message):
+        body = message[pos:]
     else:
-        return method, uri, http_v, headers, body
+        raise ValueError('Parsed past message body??')
+
+    if not is_response:
+        return method, uri, version, headers, body
+    else:
+        return version, status, reason, headers, body
 
 
 def _parse_parameters(request):
@@ -231,8 +297,8 @@ def _parse_parameters(request):
 
     elif _type in ('application/json', ):
         try:
-            parameters['body'] = json.loads(body)
-        except TypeError:
+            parameters['body'] = json.loads(request.body)
+        except (NameError, TypeError):
             pass
 
     elif _type == 'application/x-amf':
