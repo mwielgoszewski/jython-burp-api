@@ -54,8 +54,11 @@ class HttpRequest(object):
         self.parameters = _parse_parameters(self)
         self.cookies.load(self.headers.get('cookie', ''))
 
-        self.response = HttpResponse(getattr(messageInfo, 'response', None),
-                                     request=self)
+        if hasattr(messageInfo, 'response'):
+            self.response = HttpResponse(getattr(messageInfo, 'response', None),
+                                         request=self)
+        else:
+            self.response = HttpResponse(None, request=self)
 
 
     def __contains__(self, item):
