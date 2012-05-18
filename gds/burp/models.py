@@ -58,6 +58,10 @@ class HttpRequest(object):
                                      request=self)
 
 
+    def __contains__(self, item):
+        return item in self.body if self.body else False
+
+
     def __len__(self):
         return int(self.headers.get('content-length', len(self.body or '')))
 
@@ -140,6 +144,11 @@ class HttpResponse(object):
                 _parse_message(self._response)
 
         self.cookies.load(self.headers.get('set-cookie', ''))
+
+
+    def __contains__(self, item):
+        return item in self.body if self.body else False
+
 
     def __len__(self):
         return int(self.headers.get('content-length', len(self.body or '')))
