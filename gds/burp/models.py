@@ -74,6 +74,10 @@ class HttpRequest(object):
         return int(self.headers.get('content-length', len(self.body or '')))
 
 
+    def __nonzero__(self):
+        return self._request is not None
+
+
     def __repr__(self):
         return '<HttpRequest [%s]>' % (self.url.path,)
 
@@ -160,6 +164,10 @@ class HttpResponse(object):
 
     def __len__(self):
         return int(self.headers.get('content-length', len(self.body or '')))
+
+
+    def __nonzero__(self):
+        return self._response is not None
 
 
     def __repr__(self):
