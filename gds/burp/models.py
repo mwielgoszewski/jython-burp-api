@@ -31,30 +31,33 @@ class HttpRequest(object):
     Optional init arguments:
     :param callbacks: IBurpExtenderCallbacks
     '''
-    def __init__(self, messageInfo, callbacks=None):
+    def __init__(self, messageInfo=None, callbacks=None):
         self._messageInfo = messageInfo
         self._request = None
         self._callbacks = callbacks
 
-        self.host = messageInfo.getHost()
-        self.port = messageInfo.getPort()
-        self.protocol = messageInfo.getProtocol()
+        self.host = None
+        self.port = None
+        self.protocol = 80
+        self.url = urlparse('')
 
         self.method = None
-        self.url = None
+        self._uri = None
         self.version = None
         self.headers = CaseInsensitiveDict()
         self.cookies = SimpleCookie()
         self.body = None
-        self.response = None
 
-        self.url = urlparse(messageInfo.getUrl().toString())
+        if messageInfo is not None and hasattr(messageInfo, 'request'):
+            self.host = messageInfo.getHost()
+            self.port = messageInfo.getPort()
+            self.protocol = messageInfo.getProtocol()
+            self.url = urlparse(messageInfo.getUrl().toString())
 
-        if messageInfo.getRequest():
             self._request = messageInfo.getRequest().tostring()
 
-        self.method, self._uri, self.version, self.headers, self.body = \
-            _parse_message(self._request)
+            self.method, self._uri, self.version, self.headers, self.body = \
+                _parse_message(self._request)
 
         self.parameters = _parse_parameters(self)
         self.cookies.load(self.headers.get('cookie', ''))
@@ -111,8 +114,11 @@ class HttpRequest(object):
         '''
         Returns just the raw, unparsed HTTP request headers.
         '''
-        request_headers, _ = self._request.split(CRLF + CRLF, 1)
-        return request_headers
+        if self._request:
+            request_headers, _ = self._request.split(CRLF + CRLF, 1)
+            return request_headers
+
+        return
 
 
     def add_comment(self, comment, append=True):
@@ -138,7 +144,7 @@ class HttpRequest(object):
 
 
 class HttpResponse(object):
-    def __init__(self, messageInfo, request=None):
+    def __init__(self, messageInfo=None, request=None):
         self._response = None
         self.request = request
 
@@ -195,8 +201,11 @@ class HttpResponse(object):
         '''
         Returns just the raw, unparsed HTTP response headers.
         '''
-        response_headers , _ = self._response.split(CRLF + CRLF, 1)
-        return response_headers
+        if self._response:
+            response_headers , _ = self._response.split(CRLF + CRLF, 1)
+            return response_headers
+
+        return
 
 
     def add_comment(self, comment, append=True):
