@@ -9,7 +9,7 @@ Burp's IHttpRequestResponse object's more... Pythonic.
 '''
 import java.lang
 from Cookie import SimpleCookie
-from cgi import parse_qs
+from cgi import parse_header, parse_qs
 from urlparse import urlparse
 
 from .structures import CaseInsensitiveDict
@@ -300,9 +300,10 @@ def _parse_message(message):
 def _parse_parameters(request):
     parameters = {}
 
-    parameters['query'] = parse_qs(request.url.query, keep_blank_values=True)
+    if request.url.query:
+        parameters['query'] = parse_qs(request.url.query, keep_blank_values=True)
 
-    _type = request.headers.get('content-type')
+    _type, _options = parse_header(request.headers.get('content-type', ''))
 
     if _type == 'application/x-www-form-urlencoded':
         parameters['body'] = parse_qs(request.body, keep_blank_values=True)
@@ -320,6 +321,9 @@ def _parse_parameters(request):
         pass
 
     elif _type == 'application/xml':
+        pass
+
+    else:
         pass
 
     return parameters
