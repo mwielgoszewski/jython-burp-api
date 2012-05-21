@@ -7,7 +7,12 @@ gds.burp.models
 This module contains the primary objects that make working with
 Burp's IHttpRequestResponse object's more... Pythonic.
 '''
-import java.lang
+try:
+    from java.lang import Exception as JavaException
+except ImportError:
+    # running under CPython
+    JavaException = Exception
+
 from Cookie import SimpleCookie
 from cgi import parse_header, parse_qs
 from urlparse import urlparse
@@ -122,8 +127,8 @@ class HttpRequest(object):
                 self._messageInfo.setComment(comment)
             else:
                 self._messageInfo.setComment(comment)
-        except java.lang.Exception:
-            print '[*] Could not set comment %s' % (comment,)
+        except JavaException, reason:
+            print '[*] Could not set comment %s: %s' % (comment, reason,)
 
         return
 
@@ -196,7 +201,7 @@ class HttpResponse(object):
         '''
         try:
             self.request.add_comment(comment, append=append)
-        except java.lang.Exception, reason:
+        except JavaException, reason:
             print '[*] Could not set comment %s: %s' % (comment, reason,)
 
         return
