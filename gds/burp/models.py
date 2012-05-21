@@ -37,8 +37,8 @@ class HttpRequest(object):
         self._callbacks = callbacks
 
         self.host = None
-        self.port = None
-        self.protocol = 80
+        self.port = 80
+        self.protocol = 'http'
         self.url = urlparse('')
 
         self.method = None
