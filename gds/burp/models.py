@@ -7,12 +7,6 @@ gds.burp.models
 This module contains the primary objects that make working with
 Burp's IHttpRequestResponse object's more... Pythonic.
 '''
-try:
-    from java.lang import Exception as JavaException
-except ImportError:
-    # running under CPython
-    JavaException = Exception
-
 from Cookie import SimpleCookie
 from cgi import parse_header, parse_qs
 from urlparse import urlparse
@@ -122,24 +116,24 @@ class HttpRequest(object):
         return
 
 
-    def add_comment(self, comment, append=True):
+    @property
+    def comment(self):
         '''
-        Helper method to add comment to underlying IHttpRequestResponse
-        object.
+        Get comment from underlying IHttpRequestResponse object.
+        '''
+        if self._messageInfo:
+            return self._messageInfo.getComment()
 
-        :param comment: the comment
-        :param append: if True, append comment to existing comment if any.
+        return
+
+
+    @property.setter
+    def comment(self, comment):
         '''
-        try:
-            if append is True:
-                _comment = self._messageInfo.getComment()
-                if _comment:
-                    comment = '%s, %s' % (_comment, comment)
-                self._messageInfo.setComment(comment)
-            else:
-                self._messageInfo.setComment(comment)
-        except JavaException, reason:
-            print '[*] Could not set comment %s: %s' % (comment, reason,)
+        Get comment from underlying IHttpRequestResponse object.
+        '''
+        if self._messageInfo:
+            return self._messageInfo.setComment(comment)
 
         return
 
@@ -229,22 +223,6 @@ class HttpResponse(object):
         if self._response:
             response_headers , _ = self._response.split(CRLF + CRLF, 1)
             return response_headers
-
-        return
-
-
-    def add_comment(self, comment, append=True):
-        '''
-        Helper method to add comment to underlying IHttpRequestResponse
-        object.
-
-        :param comment: the comment
-        :param append: if True, append comment to existing comment if any.
-        '''
-        try:
-            self.request.add_comment(comment, append=append)
-        except JavaException, reason:
-            print '[*] Could not set comment %s: %s' % (comment, reason,)
 
         return
 
