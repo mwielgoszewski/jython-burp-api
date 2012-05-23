@@ -144,6 +144,30 @@ class HttpRequest(object):
         return
 
 
+    @property
+    def highlight(self):
+        '''
+        Get color of the underlying IHttpRequestResponse object.
+        '''
+        if self._messageInfo:
+            return self._messageInfo.getHighlight()
+
+        return
+
+
+    @highlight.setter
+    def highlight(self, color):
+        '''
+        Set color of the underlying IHttpRequestResponse object.
+
+        colors: red, orange, yellow, green, cyan, blue, pink, magenta, gray
+        '''
+        if self._messageInfo:
+            self._messageInfo.setHighlight(color)
+
+        return
+
+
 class HttpResponse(object):
     def __init__(self, messageInfo=None, request=None):
         self._response = None
