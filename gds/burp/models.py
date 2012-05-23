@@ -54,10 +54,11 @@ class HttpRequest(object):
             self.protocol = messageInfo.getProtocol()
             self.url = urlparse(messageInfo.getUrl().toString())
 
-            self._request = messageInfo.getRequest().tostring()
+            if messageInfo.getRequest():
+                self._request = messageInfo.getRequest().tostring()
 
-            self.method, self._uri, self.version, self.headers, self.body = \
-                _parse_message(self._request)
+                self.method, self._uri, self.version, self.headers, self.body = \
+                    _parse_message(self._request)
 
         self.parameters = _parse_parameters(self)
         self.cookies.load(self.headers.get('cookie', ''))
