@@ -127,7 +127,7 @@ class HttpRequest(object):
         return
 
 
-    @property.setter
+    @comment.setter
     def comment(self, comment):
         '''
         Get comment from underlying IHttpRequestResponse object.
