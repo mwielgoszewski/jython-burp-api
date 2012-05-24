@@ -265,16 +265,27 @@ class BurpExtender(IBurpExtender):
 
     @callback
     def loadConfig(self, config):
+        '''
+        This method causes Burp to load a new configuration from a
+        dictionary of key/value pairs provided. Any settings not
+        specified in the dict will be restored to their default values.
+        To selectively update only some settings and leave the rest
+        unchanged, you should first call saveConfig to obtain Burp's
+        current configuration, modify the relevant items in the dict,
+        and then call loadConfig with the same dict.
+
+        :param config: A dict of key/value pairs to use as Burp's new
+        configuration.
+        '''
         return
 
 
-    @callback
     def saveConfig(self):
         '''
         This method causes Burp to return its current configuration
         as a dictionary of key/value pairs.
         '''
-        return
+        return dict(self._check_and_callback(self.saveConfig))
 
 
     @callback
