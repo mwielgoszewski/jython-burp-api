@@ -7,18 +7,15 @@ Adds a context menu item to Burp that allows selecting
 multiple items in one of Burp's tools and assign it to
 the `items` local variable in an interactive session.
 '''
-from burp import IMenuItemHandler
-
+from .base import MenuItem
 from ..models import HttpRequest
 
 
-class ConsoleMenu(IMenuItemHandler):
+class ConsoleMenu(MenuItem):
     CAPTION = 'assign to local variable `items` in console'
 
     def __init__(self, _burp):
-        self._burp = _burp
-        self._burp.registerMenuItem(self.CAPTION, self)
-        self._burp.issueAlert('registered menu item: %r' % (self.CAPTION,))
+        MenuItem.__init__(self, _burp)
 
 
     def menuItemClicked(self, menuItemCaption, messageInfo):
