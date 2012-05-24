@@ -4,7 +4,7 @@ jython-burp-api (burpy)
 Burpy is an ISC Licensed library, written in Jython, Java and Python.
 
 Burpy exposes a Jython interface to the popular Burp Suite web security 
-testing tool, as an alternative to [Buby]:[http://tduehr.github.com/buby/] 
+testing tool, as an alternative to [Buby]:(http://tduehr.github.com/buby/) 
 for those testers who prefer Python over Ruby.
 
 
@@ -36,8 +36,8 @@ and many more! Check out <replace me> for more!
 
 Dependencies
 ------------
-- [Burp Suite (free or professional)][http://portswigger.net/burp/download.html]
-- [Jython 2.5+][http://www.jython.org/downloads.html]
+- [Burp Suite (free or professional)](http://portswigger.net/burp/download.html)
+- [Jython 2.5+](http://www.jython.org/downloads.html)
 
 
 Installation
