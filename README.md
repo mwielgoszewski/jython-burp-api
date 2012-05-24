@@ -42,7 +42,7 @@ Dependencies
 
 Installation / Running
 ----------------------
-1. Install [Jython 2.5+] - I prefer the standalone jar install
+1. Install [Jython 2.5+](http://www.jython.org/downloads.html) - I prefer the standalone jar option
 2. `git clone git://github.com/mwielgoszewski/jython-burp-api.git`
 3. `cd jython-burp-api/`
 4. Copy Burp Suite jar file(s) into current directory
@@ -53,6 +53,13 @@ Installation / Running
 6. Start Burp by adding jython, burp extender and burp onto CLASSPATH:
 
 	`$ java -cp java/src/:jython.jar:burpsuite_v1.4.01.jar burp.StartBurp -i`
+
+
+**Note:** If Jython is _outside_ the current directory (assuming you followed the instructions
+and you're in jython-burp-api/), you'll need to add Lib/ onto your Java classpath like 
+so (ht Jon Passki, thanks!):
+
+	`$ java -cp Lib:java/src:/path/to/jython.jar:burp.jar burp.StartBurp -i`
 
 
 Contribute
