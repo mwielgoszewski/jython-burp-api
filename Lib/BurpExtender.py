@@ -24,13 +24,21 @@ from gds.burp.menu import ConsoleMenu
 
 
 class BurpExtender(IBurpExtender):
+
     def __repr__(self):
         return '<BurpExtender %#x>' % (id(self),)
 
+
     def setCommandLineArgs(self, args):
         '''
+        This method is invoked immediately after the implementation's
+        constructor to pass any command-line arguments that were passed
+        to Burp Suite on startup.
+
+        The following command-line options have been made available:
+
         -i, --interactive   Run Burp in interactive mode (Jython Console)
-        -f <FILE>           Restore burp state file on startup
+        -f <FILE>           Restore from burp state file upon startup
         -h
         '''
         from optparse import OptionParser
@@ -76,10 +84,16 @@ class BurpExtender(IBurpExtender):
 
 
     def applicationClosing(self):
+        '''
+        This method is invoked immediately before Burp Suite exits.
+        '''
         return
 
 
     def registerExtenderCallbacks(self, callbacks):
+        '''
+        This method is invoked on startup.
+        '''
         self._callbacks = callbacks
 
         if self.opt.file:
