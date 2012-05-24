@@ -36,12 +36,20 @@ and many more! Check out <replace me> for more!
 
 Dependencies
 ------------
-- [Burp Suite (free or professional)](http://portswigger.net/burp/download.html)
+- [Burp Suite](http://portswigger.net/burp/download.html) (free or professional)
 - [Jython 2.5+](http://www.jython.org/downloads.html)
 
 
-Installation
-------------
+Installation / Running
+----------------------
+1. Install [Jython 2.5+] (I prefer the standalone jar install)
+2. git clone git://github.com/mwielgoszewski/jython-burp-api.git
+3. cd jython-burp-api/
+4. Copy [Burp Suite] jar file(s) into current directory
+5. Compile BurpExtender files:
+    $ javac -cp burpsuite_v1.4.01.jar:jython.jar java/src/*.java
+6. Start Burp by adding jython, burp extender and burp onto CLASSPATH:
+	$ java -cp java/src/:jython.jar:burpsuite_v1.4.01.jar burp.StartBurp -i
 
 
 Contribute
