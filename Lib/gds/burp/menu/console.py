@@ -8,10 +8,11 @@ multiple items in one of Burp's tools and assign it to
 the `items` local variable in an interactive session.
 '''
 from burp import IMenuItemHandler
+
 from ..models import HttpRequest
 
 
-class ConsoleMenuItem(IMenuItemHandler):
+class ConsoleMenu(IMenuItemHandler):
     CAPTION = 'assign to local variable `items` in console'
 
     def __init__(self, _burp):

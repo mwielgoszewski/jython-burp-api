@@ -8,7 +8,7 @@ extra functionality available via Burp's context menu.
 '''
 
 __all__ = (
-    'ConsoleMenuItem',
+    'ConsoleMenu',
     )
 
-from .console import ConsoleMenuItem
+from .console import ConsoleMenu

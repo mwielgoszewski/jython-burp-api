@@ -20,7 +20,7 @@ import sys
 
 from gds.burp import HttpRequest
 from gds.burp.decorators import callback
-from gds.burp.menu import ConsoleMenuItem
+from gds.burp.menu import ConsoleMenu
 
 
 class BurpExtender(IBurpExtender):
@@ -91,7 +91,7 @@ class BurpExtender(IBurpExtender):
                                 'file does not exist' % (self.opt.file,))
 
         if self.opt.interactive:
-            ConsoleMenuItem(_burp=self)
+            ConsoleMenu(_burp=self)
 
         self.issueAlert('burp extender ready...')
 
