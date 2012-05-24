@@ -120,7 +120,22 @@ class BurpExtender(IBurpExtender):
 
 
     @callback
-    def addToSiteMap(self, item):
+    def makeHttpRequest(self, host, port, useHttps, request):
+        return
+
+
+    @callback
+    def sendToRepeater(self, host, port, useHttps, request, tabCaption):
+        return
+
+
+    @callback
+    def sendToIntruder(self, host, port, useHttps, request, *args):
+        return
+
+
+    @callback
+    def sendToSpider(self, url):
         return
 
 
@@ -135,11 +150,31 @@ class BurpExtender(IBurpExtender):
 
 
     @callback
-    def excludeFromScope(self, url):
+    def getScanIssues(self, urlPrefix):
+        return
+
+
+    @callback
+    def registerMenuItem(self, menuItemCaption, menuItemHandler):
+        '''
+        This method can be used to register a new menu item which
+        will appear on the various context menus that are used
+        throughout Burp Suite to handle user-driven actions.
+
+        :param menuItemCaption: The caption to be displayed on the
+        menu item.
+        :param menuItemHandler: The handler to be invoked when the
+        user clicks on the menu item.
+        '''
         return
 
 
     def getProxyHistory(self, *args):
+        '''
+        This method returns details of all items in the proxy history.
+
+        :params *args: Optional strings to match against url.
+        '''
         history = []
 
         if args:
@@ -156,7 +191,7 @@ class BurpExtender(IBurpExtender):
 
 
     @callback
-    def getScanIssues(self, urlPrefix):
+    def addToSiteMap(self, item):
         return
 
 
@@ -171,6 +206,11 @@ class BurpExtender(IBurpExtender):
 
 
     @callback
+    def excludeFromScope(self, url):
+        return
+
+
+    @callback
     def includeInScope(self, url):
         return
 
@@ -182,21 +222,12 @@ class BurpExtender(IBurpExtender):
 
     @callback
     def issueAlert(self, message):
-        return
+        '''
+        This method can be used to display a specified message in
+        the Burp Suite alerts tab.
 
-
-    @callback
-    def loadConfig(self, config):
-        return
-
-
-    @callback
-    def makeHttpRequest(self, host, port, useHttps, request):
-        return
-
-
-    @callback
-    def registerMenuItem(self, menuItemCaption, menuItemHandler):
+        :param message: The alert message to display.
+        '''
         return
 
 
@@ -208,11 +239,6 @@ class BurpExtender(IBurpExtender):
         :param filename: The filename containing Burp's saved state.
         '''
         return self._check_and_callback(self.restoreState, File(filename))
-
-
-    @callback
-    def saveConfig(self):
-        return
 
 
     def saveState(self, filename):
@@ -227,22 +253,50 @@ class BurpExtender(IBurpExtender):
 
 
     @callback
-    def sendToIntruder(self, host, port, useHttps, request, *args):
+    def loadConfig(self, config):
         return
 
 
     @callback
-    def sendToRepeater(self, host, port, useHttps, request, tabCaption):
-        return
-
-
-    @callback
-    def sendToSpider(self, url):
+    def saveConfig(self):
+        '''
+        This method causes Burp to return its current configuration
+        as a dictionary of key/value pairs.
+        '''
         return
 
 
     @callback
     def setProxyInterceptionEnabled(self, enabled):
+        '''
+        This method sets the interception mode for Burp Proxy.
+
+        :param enabled: Indicates whether interception of proxy messages
+        should be enabled.
+        '''
+        return
+
+
+    def getBurpVersion(self):
+        '''
+        This method retrieves information about the version of Burp
+        in which the extension is running. It can be used by extensions
+        to dynamically adjust their behavior depending on the
+        functionality and APIs supported by the current version.
+        '''
+        return list(self._check_and_callback(self.getBurpVersion))
+
+
+    @callback
+    def exitSuite(self, promptUser):
+        '''
+        This method can be used to shut down Burp programmatically,
+        with an optional prompt to the user. If the method returns,
+        the user cancelled the shutdown prompt.
+
+        :param promptUser: Indicates whether to prompt the user to
+        confirm the shutdown.
+        '''
         return
 
 
