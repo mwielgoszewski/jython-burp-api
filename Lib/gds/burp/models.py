@@ -23,12 +23,12 @@ class HttpRequest(object):
     IHttpRequestResponse object to the constructor.
 
     Optional init arguments:
-    :param callbacks: IBurpExtenderCallbacks
+    :param _burp: IBurpExtender implementation
     '''
-    def __init__(self, messageInfo=None, callbacks=None):
+    def __init__(self, messageInfo=None, _burp=None):
         self._messageInfo = messageInfo
         self._request = None
-        self._callbacks = callbacks
+        self._burp = _burp
 
         self.host = None
         self.port = 80

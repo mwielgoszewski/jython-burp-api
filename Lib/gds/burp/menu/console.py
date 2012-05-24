@@ -24,8 +24,7 @@ class ConsoleMenuItem(IMenuItemHandler):
         requests = []
 
         for message in messageInfo:
-            requests.append(HttpRequest(message,
-                                        callbacks=self._burp.cb))
+            requests.append(HttpRequest(message, _burp=self._burp))
 
         self._burp.console.set('items', requests)
 

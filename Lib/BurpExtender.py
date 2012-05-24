@@ -147,10 +147,10 @@ class BurpExtender(IBurpExtender):
             for request in self._check_and_callback(self.getProxyHistory):
                 for matcher in matchers:
                     if matcher.search(request.getUrl().toString()):
-                        history.append(HttpRequest(request))
+                        history.append(HttpRequest(request, _burp=self))
         else:
             for request in self._check_and_callback(self.getProxyHistory):
-                history.append(HttpRequest(request))
+                history.append(HttpRequest(request, _burp=self))
 
         return history
 
@@ -165,7 +165,7 @@ class BurpExtender(IBurpExtender):
 
         for urlPrefix in urlPrefixes:
             for item in self._check_and_callback(self.getSiteMap, urlPrefix):
-                items.append(HttpRequest(item, callbacks=self._check_cb()))
+                items.append(HttpRequest(item, _burp=self))
 
         return items
 
