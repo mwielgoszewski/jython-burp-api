@@ -3,7 +3,7 @@ from ..models import HttpRequest
 
 
 class ConsoleMenuItem(IMenuItemHandler):
-    CAPTION = 'assign to local variable "item(s)" in console'
+    CAPTION = 'assign to local variable `items` in console'
 
     def __init__(self, _burp):
         self._burp = _burp
