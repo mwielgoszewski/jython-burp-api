@@ -3,6 +3,8 @@
 gds.burp.menu.base
 ~~~~~~~~~~~~~~~~~~
 
+Base MenuItem class that all MenuItemHandlers will 
+inherit from.
 '''
 from burp import IMenuItemHandler
 
