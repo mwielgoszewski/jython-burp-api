@@ -9,17 +9,14 @@ interface. It is what makes Jython <-> Burp possible.
 '''
 from java.io import File
 from java.lang import System
-from org.python.core import PySystemState
 from org.python.util import JLineConsole, PythonInterpreter
 from burp import IBurpExtender
 
 from threading import Thread
-import getopt
 import os
 import re
 import signal
 import sys
-import types
 
 from gds.burp import HttpRequest
 from gds.burp.decorators import callback
