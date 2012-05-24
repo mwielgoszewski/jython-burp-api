@@ -7,6 +7,7 @@ BurpExtender
 BurpExtender is a proxied class that implements the burp.IBurpExtender
 interface. It is what makes Jython <-> Burp possible.
 '''
+from java.io import File
 from java.lang import System
 from org.python.core import PySystemState
 from org.python.util import JLineConsole, PythonInterpreter
@@ -86,8 +87,7 @@ class BurpExtender(IBurpExtender):
 
         if self.opt.file:
             if os.path.isfile(self.opt.file):
-                from java.io import File
-                self.restoreState(File(self.opt.file))
+                self.restoreState(self.opt.file)
                 self.issueAlert('restored state from %s' % (self.opt.file,))
             else:
                 self.issueAlert('could not restore state from %s:'
@@ -200,9 +200,14 @@ class BurpExtender(IBurpExtender):
         return
 
 
-    @callback
-    def restoreState(self, file):
-        return
+    def restoreState(self, filename):
+        '''
+        This method can be used to restore Burp's state from a
+        specified saved state file.
+
+        :param filename: The filename containing Burp's saved state.
+        '''
+        return self._check_and_callback(self.restoreState, File(filename))
 
 
     @callback
@@ -210,9 +215,15 @@ class BurpExtender(IBurpExtender):
         return
 
 
-    @callback
-    def saveState(self, file):
-        return
+    def saveState(self, filename):
+        '''
+        This method can be used to save Burp's state to a specified
+        file. This method blocks until the save operation is completed,
+        and must not be called from the event thread.
+
+        :param filename: The filename to save Burp's state in.
+        '''
+        return self._check_and_callback(self.saveState, File(filename))
 
 
     @callback
