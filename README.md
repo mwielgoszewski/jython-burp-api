@@ -59,7 +59,7 @@ Installation / Running
 and you're in jython-burp-api/), you'll need to add Lib/ onto your Java classpath like 
 so (ht Jon Passki, thanks!):
 
-	`$ java -cp Lib:java/src:/path/to/jython.jar:burp.jar burp.StartBurp -i`
+	$ java -cp Lib:java/src:/path/to/jython.jar:burp.jar burp.StartBurp -i
 
 
 Contribute
