@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+
+'''
+BurpExtender
+~~~~~~~~~~~~
+
+BurpExtender is a proxied class that implements the burp.IBurpExtender
+interface. It is what makes Jython <-> Burp possible.
+'''
 from java.lang import System
 from org.python.core import PySystemState
 from org.python.util import JLineConsole, PythonInterpreter
