@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+'''
+gds.burp.decorators
+~~~~~~~~~~~~~~~~~~~
+
+Decorator to exposes IBurpExtenderCallbacks to BurpExtender class methods
+with the same name, reducing a lot of repetive code.
+'''
 import types
 
 
