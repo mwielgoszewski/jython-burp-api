@@ -182,23 +182,19 @@ class BurpExtender(IBurpExtender):
 
     def getProxyHistory(self, *args):
         '''
-        This method returns details of all items in the proxy history.
+        This method returns a generator of all items in the proxy history.
 
         :params *args: Optional strings to match against url.
         '''
-        history = []
-
         if args:
             matchers = [re.compile(arg) for arg in args]
             for request in self._check_and_callback(self.getProxyHistory):
                 for matcher in matchers:
                     if matcher.search(request.getUrl().toString()):
-                        history.append(HttpRequest(request, _burp=self))
+                        yield HttpRequest(request, _burp=self)
         else:
             for request in self._check_and_callback(self.getProxyHistory):
-                history.append(HttpRequest(request, _burp=self))
-
-        return history
+                yield HttpRequest(request, _burp=self)
 
 
     @callback
@@ -207,13 +203,18 @@ class BurpExtender(IBurpExtender):
 
 
     def getSiteMap(self, *urlPrefixes):
-        items = []
+        '''
+        This method returns a generator of details of items in the site map.
 
+        :params *urlPrefixes: Optional URL prefixes, in order to extract
+        a specific subset of the site map. The method performs a simple
+        case-sensitive text match, returning all site map items whose URL
+        begins with the specified prefix. If this parameter is null,
+        the entire site map is returned.
+        '''
         for urlPrefix in urlPrefixes:
             for item in self._check_and_callback(self.getSiteMap, urlPrefix):
-                items.append(HttpRequest(item, _burp=self))
-
-        return items
+                yield HttpRequest(item, _burp=self)
 
 
     @callback
