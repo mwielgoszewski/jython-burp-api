@@ -7,6 +7,13 @@ Burpy exposes a Jython interface to the popular Burp Suite web security
 testing tool, as an alternative to [Buby](http://tduehr.github.com/buby/) 
 for those testers who prefer Python over Ruby.
 
+Features
+--------
+By default, we monitor a list of registered menu items for any changes.
+If a file has changed (i.e., it's last modification time was updated), the
+API will automatically attempt to reload it. This is great for active
+development and debugging of Burp extensions.
+
 
 Examples
 --------
@@ -34,13 +41,8 @@ assign them to the `items` local variable like so:
 and many more!
 
 
-Hot-reloading
--------------
-By default, we monitor a list of registered menu items for any changes.
-If a file has changed (i.e., it's last modification time was updated), the
-API will automatically attempt to reload it. This is great for active
-development and debugging of Burp extensions.
-
+Adding a simple menu item
+-------------------------
 Check out the [ConsoleMenu](master/Lib/gds/burp/menu/console.py) class
 for an example of how to add menu item's to Burp's context menu. Below is an
 example of how to use one in your code.
@@ -66,6 +68,12 @@ registerExtenderCallbacks method (passing self as a reference):
 
     if self.opt.interactive:
         ConsoleMenu(self)
+
+
+Note that when we defined the menuItemClicked method within MyMenuItem, we
+annotated it with @staticmethod. This allows for the plugin monitor to
+hot-swap out our method on the registered menu item without having to
+re-initiaize it.
 
 
 Dependencies
