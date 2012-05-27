@@ -33,6 +33,9 @@ assign them to the `items` local variable like so:
 
 and many more!
 
+
+Hot-reloading
+-------------
 By default, we monitor a list of registered menu items for any changes.
 If a file has changed (i.e., it's last modification time was updated), the
 API will automatically attempt to reload it. This is great for active
