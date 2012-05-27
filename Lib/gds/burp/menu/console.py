@@ -20,7 +20,7 @@ class ConsoleMenu(MenuItem):
                                       'class': self.__class__.__name__,
                                       'instance': self})
 
-
+    @staticmethod
     def menuItemClicked(self, menuItemCaption, messageInfo):
         requests = []
 
