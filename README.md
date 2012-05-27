@@ -38,7 +38,7 @@ If a file has changed (i.e., it's last modification time was updated), the
 API will automatically attempt to reload it. This is great for active
 development and debugging of Burp extensions.
 
-Check out the [ConsoleMenu](blob/master/Lib/gds/burp/menu/console.py) class
+Check out the [ConsoleMenu](Lib/gds/burp/menu/console.py) class
 for an example of how to add menu item's to Burp's context menu. Below is an
 example of how to use one in your code.
 
