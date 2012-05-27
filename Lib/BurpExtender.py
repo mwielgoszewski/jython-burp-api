@@ -20,8 +20,8 @@ import sys
 
 from gds.burp import HttpRequest
 from gds.burp.decorators import callback
-from gds.burp.helpers import PluginMonitorThread
-from gds.burp.menu import MenuItem, ConsoleMenu
+from gds.burp.menu import ConsoleMenu
+from gds.burp.monitor import PluginMonitorThread
 
 
 class BurpExtender(IBurpExtender):
