@@ -17,6 +17,7 @@ import os
 import re
 import signal
 import sys
+import time
 
 from gds.burp import HttpRequest
 from gds.burp.decorators import callback
@@ -24,6 +25,8 @@ from gds.burp.menu import ConsoleMenu
 
 
 class BurpExtender(IBurpExtender):
+    def __init__(self):
+        self.monitoring = []
 
     def __repr__(self):
         return '<BurpExtender %#x>' % (id(self),)
@@ -54,6 +57,8 @@ class BurpExtender(IBurpExtender):
         parser.add_option('-P', '--python-path',
                           default='',
                           help='Set PYTHONPATH used by Jython')
+
+        parser.add_option('-d', '--debug', action='store_true')
 
         opt, args = parser.parse_args(list(args))
 
@@ -106,6 +111,10 @@ class BurpExtender(IBurpExtender):
 
         if self.opt.interactive:
             ConsoleMenu(_burp=self)
+
+        if self.opt.debug:
+            self.monitor = PluginMonitorThread(self)
+            self.monitor.start()
 
         self.issueAlert('burp extender ready...')
 
@@ -334,6 +343,59 @@ class ConsoleThread(Thread):
                 self.console.interact()
             except Exception:
                 pass
+
+
+class PluginMonitorThread(Thread):
+    def __init__(self, _burp, interval=5):
+        Thread.__init__(self, name='plugin-monitor')
+        self._burp = _burp
+        self.interval = interval
+        self.hashes = {}
+        #self.interpreter = PythonInterpreter()
+
+        for plugin in self._burp.monitoring:
+            self._burp.issueAlert('monitoring %s' % (plugin.get('class'),))
+            lastModified = File(plugin.get('filename')).lastModified()
+            self.hashes[plugin.get('filename')] = lastModified
+
+    def _has_changed(self, filename):
+        '''
+        status = os.fstat(filename)
+        if status.st_mtime != self.hashes.get(filename):
+        '''
+        lastModified = File(filename).lastModified()
+
+        if self.hashes.get(filename) < lastModified:
+            self.hashes.update({filename: lastModified})
+            return True
+        else:
+            return False
+
+    def run(self):
+
+        while True:
+            try:
+                for plugin in self._burp.monitoring:
+                    if self._has_changed(plugin.get('filename')):
+                        self._burp.issueAlert('Reloading %s' % (plugin.get('class'),))
+
+                        instance = plugin.get('instance')
+
+                        m = __import__(instance.__module__,
+                                       globals(), locals(),
+                                       [plugin.get('class')])
+                        reload(m)
+
+                        instance = getattr(m, plugin.get('class'))(self._burp)
+
+                        #self.interpreter.exec(
+                        #    'from %s import %s' % (instance.__module__,
+                        #                           plugin.get('class')))
+
+            except Exception, e:
+                self._burp.issueAlert('Error reloading...: %s' % (e,))
+
+            time.sleep(self.interval)
 
 
 def _sigbreak(signum, frame):

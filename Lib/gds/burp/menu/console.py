@@ -16,6 +16,9 @@ class ConsoleMenu(MenuItem):
 
     def __init__(self, _burp):
         MenuItem.__init__(self, _burp)
+        self._burp.monitoring.append({'filename': __file__,
+                                      'class': self.__class__.__name__,
+                                      'instance': self})
 
 
     def menuItemClicked(self, menuItemCaption, messageInfo):
