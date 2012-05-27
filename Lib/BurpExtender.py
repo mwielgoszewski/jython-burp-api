@@ -10,7 +10,7 @@ interface. It is what makes Jython <-> Burp possible.
 from java.io import File
 from java.lang import System
 from org.python.util import JLineConsole, PythonInterpreter
-from burp import IBurpExtender
+from burp import IBurpExtender, IMenuItemHandler
 
 from threading import Thread
 import os
@@ -174,7 +174,6 @@ class BurpExtender(IBurpExtender):
         return
 
 
-    @callback
     def registerMenuItem(self, menuItemCaption, menuItemHandler):
         '''
         This method can be used to register a new menu item which
@@ -186,6 +185,21 @@ class BurpExtender(IBurpExtender):
         :param menuItemHandler: The handler to be invoked when the
         user clicks on the menu item.
         '''
+        _module = menuItemHandler.__module__
+        _filename = sys.modules[_module].__file__
+        _class = menuItemHandler.__class__.__name__
+
+        self.monitoring.append({
+            'filename': _filename.replace('$py.class', '.py'),
+            'class': _class,
+            'module': _module,
+            'type': 'IMenuItemHandler',
+            'instance': menuItemHandler,
+            })
+
+        self._check_and_callback(
+            self.registerMenuItem, menuItemCaption, menuItemHandler)
+
         return
 
 

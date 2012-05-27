@@ -4,8 +4,6 @@ from threading import Thread
 import time
 import types
 
-from .menu import MenuItem
-
 
 class PluginMonitorThread(Thread):
     def __init__(self, _burp, interval=5):
@@ -18,7 +16,6 @@ class PluginMonitorThread(Thread):
             self._burp.issueAlert('monitoring %s' % (plugin.get('class'),))
 
     def _has_changed(self, filename):
-        filename = filename.replace('$py.class', '.py')
         lastModified = File(filename).lastModified()
 
         if self.hashes.get(filename, -1) < lastModified:
@@ -33,13 +30,13 @@ class PluginMonitorThread(Thread):
 
             instance = plugin.get('instance')
 
-            m = __import__(instance.__module__, globals(), locals(),
+            m = __import__(plugin.get('module'), globals(), locals(),
                            [plugin.get('class')])
             reload(m)
 
             klass = getattr(m, plugin.get('class'))
 
-            if isinstance(instance, MenuItem):
+            if plugin.get('type') == 'IMenuItemHandler':
                 # hot patch that bitch
                 menuItemClicked = getattr(klass, 'menuItemClicked')
                 instance.menuItemClicked = types.MethodType(
