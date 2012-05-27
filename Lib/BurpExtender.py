@@ -58,7 +58,9 @@ class BurpExtender(IBurpExtender):
                           default='',
                           help='Set PYTHONPATH used by Jython')
 
-        parser.add_option('-d', '--debug', action='store_true')
+        parser.add_option('--disable-reloading',
+                          action='store_true',
+                          help='Disable hot-reloading when a file is changed')
 
         opt, args = parser.parse_args(list(args))
 
@@ -112,7 +114,7 @@ class BurpExtender(IBurpExtender):
         if self.opt.interactive:
             ConsoleMenu(_burp=self)
 
-        if self.opt.debug:
+        if not self.opt.disable_reloading:
             self.monitor = PluginMonitorThread(self)
             self.monitor.start()
 
