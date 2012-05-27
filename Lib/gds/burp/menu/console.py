@@ -17,7 +17,7 @@ class ConsoleMenu(MenuItem):
     def __init__(self, _burp):
         MenuItem.__init__(self, _burp)
 
-
+    @staticmethod
     def menuItemClicked(self, menuItemCaption, messageInfo):
         requests = []
 

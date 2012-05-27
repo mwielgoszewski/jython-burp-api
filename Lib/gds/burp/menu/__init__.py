@@ -11,4 +11,5 @@ __all__ = (
     'ConsoleMenu',
     )
 
+from .base import MenuItem
 from .console import ConsoleMenu
