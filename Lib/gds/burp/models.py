@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 '''
 gds.burp.models
 ~~~~~~~~~~~~~~~
@@ -11,6 +10,7 @@ from Cookie import SimpleCookie
 from cgi import parse_header, parse_qs
 from urlparse import urlparse
 
+from .decorators import reify
 from .structures import CaseInsensitiveDict
 
 
@@ -30,32 +30,23 @@ class HttpRequest(object):
         self._request = None
         self._burp = _burp
 
-        self.host = None
-        self.port = 80
-        self.protocol = 'http'
-        self.url = urlparse('')
+        self._host = None
+        self._port = 80
+        self._protocol = 'http'
+        self._url = ''
 
         self.method = None
         self._uri = None
         self.version = None
-        self.headers = CaseInsensitiveDict()
-        self.cookies = SimpleCookie()
+        self._headers = {}
         self.body = None
 
         if messageInfo is not None and hasattr(messageInfo, 'request'):
-            self.host = messageInfo.getHost()
-            self.port = messageInfo.getPort()
-            self.protocol = messageInfo.getProtocol()
-            self.url = urlparse(messageInfo.getUrl().toString())
-
             if messageInfo.getRequest():
                 self._request = messageInfo.getRequest().tostring()
 
-                self.method, self._uri, self.version, self.headers, self.body = \
+                self.method, self._uri, self.version, self._headers, self.body = \
                     _parse_message(self._request)
-
-        self.parameters = _parse_parameters(self)
-        self.cookies.load(self.headers.get('cookie', ''))
 
         if hasattr(messageInfo, 'response'):
             self.response = HttpResponse(getattr(messageInfo, 'response', None),
@@ -78,6 +69,64 @@ class HttpRequest(object):
 
     def __repr__(self):
         return '<HttpRequest [%s]>' % (self.url.path,)
+
+
+    @reify
+    def host(self):
+        if self._messageInfo is not None:
+            self._host = self._messageInfo.getHost()
+
+        return self._host
+
+
+    @reify
+    def port(self):
+        if self._messageInfo is not None:
+            self._port = self._messageInfo.getPort()
+
+        return self._port
+
+
+    @reify
+    def protocol(self):
+        if self._messageInfo is not None:
+            self._protocol = self._messageInfo.getProtocol()
+
+        return self._protocol
+
+
+    @reify
+    def url(self):
+        if self._messageInfo is not None:
+            self._url = urlparse(self._messageInfo.getUrl().toString())
+
+        return self._url
+
+
+    @reify
+    def cookies(self):
+        self._cookies = SimpleCookie(self.headers.get('cookie', ''))
+        return self._cookies
+
+
+    @reify
+    def headers(self):
+        '''
+        The HTTP headers sent in this request. Headers are accessible
+        by their header names (case insensitive).
+        '''
+        self._headers = CaseInsensitiveDict(self._headers)
+        return self._headers
+
+
+    @reify
+    def parameters(self):
+        '''
+        Parameters parsed into a dictionary based on type (i.e., query,
+        body, etc.)
+        '''
+        self._parameters = _parse_parameters(self)
+        return self._parameters
 
 
     @property
@@ -171,16 +220,13 @@ class HttpResponse(object):
         self.status_code = None
         self.reason = None
         self.encoding = None
-        self.headers = CaseInsensitiveDict()
-        self.cookies = SimpleCookie()
+        self._headers = {}
         self.body = None
 
         if messageInfo is not None:
             self._response = messageInfo.tostring()
-            self.version, self.status_code, self.reason, self.headers, self.body = \
+            self.version, self.status_code, self.reason, self._headers, self.body = \
                 _parse_message(self._response)
-
-        self.cookies.load(self.headers.get('set-cookie', ''))
 
 
     def __contains__(self, item):
@@ -197,6 +243,22 @@ class HttpResponse(object):
 
     def __repr__(self):
         return '<HttpResponse [%s]>' % (self.status_code, )
+
+
+    @reify
+    def cookies(self):
+        self._cookies = SimpleCookie(self.headers.get('set-cookie', ''))
+        return self._cookies
+
+
+    @reify
+    def headers(self):
+        '''
+        The HTTP headers received in this response. Headers are accessible
+        by their header names (case insensitive).
+        '''
+        self._headers = CaseInsensitiveDict(self._headers)
+        return self._headers
 
 
     @property
