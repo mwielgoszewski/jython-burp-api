@@ -337,7 +337,6 @@ class BurpExtender(IBurpExtender):
         return list(self._check_and_callback(self.getBurpVersion))
 
 
-    @callback
     def exitSuite(self, promptUser=False):
         '''
         This method can be used to shut down Burp programmatically,
@@ -347,7 +346,10 @@ class BurpExtender(IBurpExtender):
         :param promptUser: Indicates whether to prompt the user to
         confirm the shutdown (default is False: no prompt).
         '''
-        return
+        if promptUser is True:
+            return self._check_and_callback(self.exitSuite, True)
+
+        return self._check_and_callback(self.exitSuite, False)
 
 
 class ConsoleThread(Thread):
