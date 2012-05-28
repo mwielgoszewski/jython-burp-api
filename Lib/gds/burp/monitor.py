@@ -50,6 +50,7 @@ class PluginMonitorThread(Thread):
         if plugin.get('type') == 'IMenuItemHandler':
             self._patch_menu_item(instance(), klass)
         else:
+            #TODO copy over old instance__dict__ to new instance
             instance = weakref.ref(klass(self._burp))
 
         plugin['reloaded'] = True
