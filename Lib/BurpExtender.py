@@ -338,14 +338,14 @@ class BurpExtender(IBurpExtender):
 
 
     @callback
-    def exitSuite(self, promptUser):
+    def exitSuite(self, promptUser=False):
         '''
         This method can be used to shut down Burp programmatically,
         with an optional prompt to the user. If the method returns,
         the user cancelled the shutdown prompt.
 
         :param promptUser: Indicates whether to prompt the user to
-        confirm the shutdown.
+        confirm the shutdown (default is False: no prompt).
         '''
         return
 
