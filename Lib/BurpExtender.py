@@ -187,17 +187,19 @@ class BurpExtender(IBurpExtender):
         :param menuItemHandler: The handler to be invoked when the
         user clicks on the menu item.
         '''
-        _module = menuItemHandler.__module__
-        _filename = sys.modules[_module].__file__
-        _class = menuItemHandler.__class__.__name__
+        # don't monitor objects initialized in the interpreter
+        if menuItemHandler.__module__ != '__main__':
+            _module = menuItemHandler.__module__
+            _filename = sys.modules[_module].__file__
+            _class = menuItemHandler.__class__.__name__
 
-        self.monitoring.append({
-            'filename': _filename.replace('$py.class', '.py'),
-            'class': _class,
-            'module': _module,
-            'type': 'IMenuItemHandler',
-            'instance': menuItemHandler,
-            })
+            self.monitoring.append({
+                'filename': _filename.replace('$py.class', '.py'),
+                'class': _class,
+                'module': _module,
+                'type': 'IMenuItemHandler',
+                'instance': menuItemHandler,
+                })
 
         self._check_and_callback(
             self.registerMenuItem, menuItemCaption, menuItemHandler)
