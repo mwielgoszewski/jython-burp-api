@@ -3,6 +3,7 @@ from java.io import File
 from threading import Thread
 import time
 import types
+import weakref
 
 
 class PluginMonitorThread(Thread):
@@ -36,6 +37,10 @@ class PluginMonitorThread(Thread):
     def _reload(self, plugin):
         instance = plugin.get('instance')
 
+        if instance() is None:
+            self._burp.issueAlert('reference to object %s.%s no longer '
+                'exists' % (plugin.get('module'), plugin.get('class'),))
+
         m = __import__(plugin.get('module'), globals(), locals(),
                        [plugin.get('class')])
         reload(m)
@@ -43,9 +48,9 @@ class PluginMonitorThread(Thread):
         klass = getattr(m, plugin.get('class'))
 
         if plugin.get('type') == 'IMenuItemHandler':
-            self._patch_menu_item(instance, klass)
+            self._patch_menu_item(instance(), klass)
         else:
-            instance = klass(self._burp)
+            instance = weakref.ref(klass(self._burp))
 
         plugin['reloaded'] = True
 

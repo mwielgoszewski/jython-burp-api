@@ -17,6 +17,7 @@ import os
 import re
 import signal
 import sys
+import weakref
 
 from gds.burp import HttpRequest
 from gds.burp.decorators import callback
@@ -198,7 +199,7 @@ class BurpExtender(IBurpExtender):
                 'class': _class,
                 'module': _module,
                 'type': 'IMenuItemHandler',
-                'instance': menuItemHandler,
+                'instance': weakref.ref(menuItemHandler),
                 })
 
         self._check_and_callback(
