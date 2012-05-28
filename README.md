@@ -21,7 +21,7 @@ To start an interactive console, simply pass the -i command line argument
 when starting Burp.  You can also click one or multiple items in Burp and
 assign them to the `items` local variable like so:
 
-    $ java -cp jython.jar:burpsuite_pro_v1.07.jar Burp.StartBurp -i
+    $ java -cp java/src/:jython.jar:burpsuite_pro_v1.07.jar burp.StartBurp -i
     ... launching Jython/Burp interpeter ...
 
     >>> Burp
