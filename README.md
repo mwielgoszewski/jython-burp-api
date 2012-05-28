@@ -43,9 +43,9 @@ and many more!
 
 Adding a simple menu item
 -------------------------
-Check out the [ConsoleMenu](master/Lib/gds/burp/menu/console.py) class
-for an example of how to add menu item's to Burp's context menu. Below is an
-example of how to use one in your code.
+Check out the [ConsoleMenu](https://github.com/mwielgoszewski/jython-burp-api/blob/master/Lib/gds/burp/menu/console.py)
+class for an example of how to add menu item's to Burp's context menu.
+Below is an example of how to use one in your code.
 
     from gds.burp.menu.base import MenuItem
     
