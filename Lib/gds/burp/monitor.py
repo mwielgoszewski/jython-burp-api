@@ -40,6 +40,7 @@ class PluginMonitorThread(Thread):
         if instance() is None:
             self._burp.issueAlert('reference to object %s.%s no longer '
                 'exists' % (plugin.get('module'), plugin.get('class'),))
+            return
 
         m = __import__(plugin.get('module'), globals(), locals(),
                        [plugin.get('class')])
