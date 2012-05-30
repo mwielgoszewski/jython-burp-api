@@ -20,17 +20,22 @@ import sys
 import weakref
 
 from gds.burp import HttpRequest
+from gds.burp.core import ComponentManager
 from gds.burp.decorators import callback
 from gds.burp.menu import ConsoleMenu
 from gds.burp.monitor import PluginMonitorThread
 
-
-class BurpExtender(IBurpExtender):
+class BurpExtender(IBurpExtender, ComponentManager):
     def __init__(self):
+        ComponentManager.__init__(self)
         self.monitoring = []
 
     def __repr__(self):
         return '<BurpExtender %#x>' % (id(self),)
+
+
+    def component_activated(self, component):
+        component.burp = self
 
 
     def setCommandLineArgs(self, args):
