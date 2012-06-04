@@ -27,7 +27,6 @@ class HttpRequest(object):
     '''
     def __init__(self, messageInfo=None, _burp=None):
         self._messageInfo = messageInfo
-        self._request = None
         self._burp = _burp
 
         self._host = None
@@ -43,10 +42,8 @@ class HttpRequest(object):
 
         if messageInfo is not None and hasattr(messageInfo, 'request'):
             if messageInfo.getRequest():
-                self._request = messageInfo.getRequest().tostring()
-
                 self.method, self._uri, self.version, self._headers, self.body = \
-                    _parse_message(self._request)
+                    _parse_message(messageInfo.getRequest().tostring())
 
         if hasattr(messageInfo, 'response'):
             self.response = HttpResponse(getattr(messageInfo, 'response', None),
@@ -64,7 +61,7 @@ class HttpRequest(object):
 
 
     def __nonzero__(self):
-        return self._request is not None
+        return self.raw is not None
 
 
     def __repr__(self):
@@ -148,19 +145,24 @@ class HttpRequest(object):
     @property
     def raw(self):
         '''
-        Returns the raw, unparsed HTTP request.
+        Returns the full request contents.
         '''
-        return self._request
+        if self._messageInfo:
+            return self._messageInfo.getRequest().tostring()
+
+        return
 
 
-    @property
-    def raw_headers(self):
+    @raw.setter
+    def raw(self, message):
         '''
-        Returns just the raw, unparsed HTTP request headers.
+        Sets the request contents which should be sent to the application.
+
+        :param message: The request contents which should be sent to the
+        application.
         '''
-        if self._request:
-            request_headers, _ = self._request.split(CRLF + CRLF, 1)
-            return request_headers
+        if self._messageInfo:
+            self._messageInfo.setRequest(message)
 
         return
 
@@ -212,8 +214,7 @@ class HttpRequest(object):
 
 
 class HttpResponse(object):
-    def __init__(self, messageInfo=None, request=None):
-        self._response = None
+    def __init__(self, message=None, request=None):
         self.request = request
 
         self.version = None
@@ -223,10 +224,9 @@ class HttpResponse(object):
         self._headers = {}
         self.body = None
 
-        if messageInfo is not None:
-            self._response = messageInfo.tostring()
+        if message is not None:
             self.version, self.status_code, self.reason, self._headers, self.body = \
-                _parse_message(self._response)
+                _parse_message(message.tostring())
 
 
     def __contains__(self, item):
@@ -238,7 +238,7 @@ class HttpResponse(object):
 
 
     def __nonzero__(self):
-        return self._response is not None
+        return self.raw is not None
 
 
     def __repr__(self):
@@ -272,19 +272,25 @@ class HttpResponse(object):
     @property
     def raw(self):
         '''
-        Returns the raw, unparsed HTTP response.
+        Returns the full response contents.
         '''
-        return self._response
+        if self.request._messageInfo:
+            return self.request._messageInfo.getResponse().tostring()
+
+        return
 
 
-    @property
-    def raw_headers(self):
+    @raw.setter
+    def raw(self, message):
         '''
-        Returns just the raw, unparsed HTTP response headers.
+        Sets the response contents which should be processed by the
+        invoking Burp tool.
+
+        :param message: The response contents which should be processed
+        by the invoking Burp tool.
         '''
-        if self._response:
-            response_headers , _ = self._response.split(CRLF + CRLF, 1)
-            return response_headers
+        if self.request._messageInfo:
+            return self.request._messageInfo.setResponse(message)
 
         return
 
