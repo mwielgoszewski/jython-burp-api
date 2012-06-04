@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .api import IScanIssueHandler
 from .core import Component, ExtensionPoint
 

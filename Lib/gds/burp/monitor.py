@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from java.io import File
 
 from threading import Thread
