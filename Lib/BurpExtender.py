@@ -24,6 +24,8 @@ from gds.burp.core import ComponentManager
 from gds.burp.decorators import callback
 from gds.burp.menu import ConsoleMenu
 from gds.burp.monitor import PluginMonitorThread
+from gds.burp.scanner import NewScanIssueDispatcher
+
 
 class BurpExtender(IBurpExtender, ComponentManager):
     def __init__(self):
@@ -211,6 +213,21 @@ class BurpExtender(IBurpExtender, ComponentManager):
             self.registerMenuItem, menuItemCaption, menuItemHandler)
 
         return
+
+
+    def newScanIssue(self, issue):
+        '''
+        This method is invoked whenever Burp Scanner discovers a new,
+        unique issue, and can be used to perform customised reporting
+        or logging of issues.
+
+        Plugins should implement the `newScanIssue` method of the
+        `INewScanIssueHandler` interface to act upon new scan issues as
+        they are identified.
+
+        :param issue: Details of the new scan issue.
+        '''
+        NewScanIssueDispatcher(self).newScanIssue(issue)
 
 
     def getProxyHistory(self, *args):
