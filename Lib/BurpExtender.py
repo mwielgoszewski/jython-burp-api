@@ -33,7 +33,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         self.monitoring = []
 
     def __repr__(self):
-        return '<BurpExtender %#x>' % (id(self),)
+        return '<BurpExtender at %#x>' % (id(self),)
 
 
     def component_activated(self, component):
@@ -227,7 +227,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         :param issue: Details of the new scan issue.
         '''
-        NewScanIssueDispatcher(self).newScanIssue(issue)
+        return NewScanIssueDispatcher(self).newScanIssue(issue)
 
 
     def getProxyHistory(self, *args):
