@@ -4,7 +4,14 @@ gds.burp.dispatchers
 ~~~~~~~~~~~~~~~~~~~~
 
 '''
-from .api import *
+from .api import INewScanIssueHandler, \
+    IIntruderRequestHandler, IIntruderResponseHandler, \
+    IProxyRequestHandler, IProxyResponseHandler, \
+    IRepeaterRequestHandler, IRepeaterResponseHandler, \
+    IScannerRequestHandler, IScannerResponseHandler, \
+    ISequencerRequestHandler, ISequencerResponseHandler, \
+    ISpiderRequestHandler, ISpiderResponseHandler
+
 from .core import Component, ExtensionPoint
 
 
@@ -19,41 +26,33 @@ class NewScanIssueDispatcher(Component):
 
 class PluginDispatcher(Component):
 
-    handlers = {
-        'intruder': {
-                True: ExtensionPoint(IIntruderRequestHandler),
-                False: ExtensionPoint(IIntruderResponseHandler),
-            },
-        'proxy': {
-                True: ExtensionPoint(IProxyRequestHandler),
-                False: ExtensionPoint(IProxyResponseHandler),
-            },
-        'repeater': {
-                True: ExtensionPoint(IRepeaterRequestHandler),
-                False: ExtensionPoint(IRepeaterResponseHandler),
-            },
-        'scanner': {
-                True: ExtensionPoint(IScannerRequestHandler),
-                False: ExtensionPoint(IScannerResponseHandler),
-            },
-        'sequencer': {
-                True: ExtensionPoint(ISequencerRequestHandler),
-                False: ExtensionPoint(ISequencerResponseHandler),
-            },
-        'spider': {
-                True: ExtensionPoint(ISpiderRequestHandler),
-                False: ExtensionPoint(ISpiderResponseHandler),
-            },
-        }
+    intruderRequest = ExtensionPoint(IIntruderRequestHandler)
+    intruderResponse = ExtensionPoint(IIntruderResponseHandler)
+
+    proxyRequest = ExtensionPoint(IProxyRequestHandler)
+    proxyResponse = ExtensionPoint(IProxyResponseHandler)
+
+    repeaterRequest = ExtensionPoint(IRepeaterRequestHandler)
+    repeaterResponse = ExtensionPoint(IRepeaterResponseHandler) 
+
+    scannerRequest = ExtensionPoint(IScannerRequestHandler)
+    scannerResponse = ExtensionPoint(IScannerResponseHandler)
+
+    sequencerRequest = ExtensionPoint(ISequencerRequestHandler)
+    sequencerResponse = ExtensionPoint(ISequencerResponseHandler)
+
+    spiderRequest = ExtensionPoint(ISpiderRequestHandler)
+    spiderResponse = ExtensionPoint(ISpiderResponseHandler)
 
 
     def processHttpMessage(self, toolName, messageIsRequest, request):
+        handlers = ''.join([toolName,
+                            'Request' if messageIsRequest else 'Response'])
+
         method = ''.join(['process',
                           'Request' if messageIsRequest else 'Response'])
 
-        for handler in self.handlers.get(toolName, {}).get(messageIsRequest, []):
+        for handler in getattr(self, handlers):
             getattr(handler, method)(request)
 
         return
-
-
