@@ -12,6 +12,7 @@ from org.python.util import JLineConsole, PythonInterpreter
 from burp import IBurpExtender, IMenuItemHandler
 
 from threading import Thread
+import logging
 import os
 import re
 import signal
@@ -29,7 +30,9 @@ from gds.burp.monitor import PluginMonitorThread
 class BurpExtender(IBurpExtender, ComponentManager):
     def __init__(self):
         ComponentManager.__init__(self)
+        self.log = logging.getLogger(self.__class__.__name__)
         self.monitoring = []
+
 
     def __repr__(self):
         return '<BurpExtender at %#x>' % (id(self),)
@@ -37,6 +40,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
     def componentActivated(self, component):
         component.burp = self
+        component.log = self.log
 
 
     def setCommandLineArgs(self, args):

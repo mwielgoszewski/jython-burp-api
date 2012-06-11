@@ -21,6 +21,8 @@ class NewScanIssueDispatcher(Component):
 
     def newScanIssue(self, issue):
         for dispatch in self.dispatchers:
+            self.log.debug('Dispatching new scan issue details via %s',
+                           dispatch.__class__.__name__)
             dispatch.newScanissue(issue)
 
 
@@ -53,6 +55,8 @@ class PluginDispatcher(Component):
                           'Request' if messageIsRequest else 'Response'])
 
         for handler in getattr(self, handlers):
+            self.log.debug('Dispatching handler: %s.%s(%r)',
+                           handler.__class__.__name__, method, request)
             getattr(handler, method)(request)
 
         return
