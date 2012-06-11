@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 '''
 BurpExtender
 ~~~~~~~~~~~~
@@ -22,9 +21,9 @@ import weakref
 from gds.burp import HttpRequest
 from gds.burp.core import ComponentManager
 from gds.burp.decorators import callback
+from gds.burp.dispatchers import NewScanIssueDispatcher, PluginDispatcher
 from gds.burp.menu import ConsoleMenu
 from gds.burp.monitor import PluginMonitorThread
-from gds.burp.scanner import NewScanIssueDispatcher
 
 
 class BurpExtender(IBurpExtender, ComponentManager):
@@ -221,13 +220,53 @@ class BurpExtender(IBurpExtender, ComponentManager):
         unique issue, and can be used to perform customised reporting
         or logging of issues.
 
-        Plugins should implement the `newScanIssue` method of the
-        `INewScanIssueHandler` interface to act upon new scan issues as
-        they are identified.
+        Plugins should implement the :meth:`~INewScanIssueHandler.newScanIssue`
+        method of the :class:`INewScanIssueHandler` interface to act upon
+        new scan issues as they are identified.
 
         :param issue: Details of the new scan issue.
         '''
         return NewScanIssueDispatcher(self).newScanIssue(issue)
+
+
+    def processHttpMessage(self, toolName, messageIsRequest, request):
+        '''
+        This method is invoked whenever any of Burp's tools makes an HTTP
+        request or receives a response. It allows extensions to intercept
+        and modify the HTTP traffic of all Burp tools. For each request,
+        the method is invoked after the request has been fully processed
+        by the invoking tool and is about to be made on the network. For
+        each response, the method is invoked after the response has been
+        received from the network and before any processing is performed
+        by the invoking tool.
+
+        Plugins should implement the :meth:`processRequest` and/or
+        :meth:`processResponse` methods of one or more interfaces in
+        :module:`gds.burp.api`.
+
+        A plugin may implement more than one interface, and implement both
+        `processRequest` and `processResponse` methods. This allows plugins
+        to only hook certain tools in specific scenarios, such as "only
+        hook requests sent via Intruder or Scanner, and only hook responses
+        received via Proxy tool.
+
+        An example is provided below that only modifies requests as they are
+        made via Repeater and Intruder.
+
+        .. code-block:: python
+            class MyPlugin(Component):
+
+                implements(IIntruderRequestHandler, IRepeaterRequestHandler)
+
+                def processRequest(self, request):
+                    # replace all occurrences of 'somestring' in HTTP
+                    # request with 'anotherstring'.
+                    request.raw = request.raw.replace('somestring',
+                                                      'anotherstring')
+
+        '''
+        PluginDispatcher(self).processHttpMessage(
+            toolName, messageIsRequest, HttpRequest(request, _burp=self))
 
 
     def getProxyHistory(self, *args):
