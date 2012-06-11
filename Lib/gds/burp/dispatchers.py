@@ -21,9 +21,11 @@ class NewScanIssueDispatcher(Component):
 
     def newScanIssue(self, issue):
         for dispatch in self.dispatchers:
-            self.log.debug('Dispatching new scan issue details via %s',
-                           dispatch.__class__.__name__)
-            dispatch.newScanissue(issue)
+            if self.burp.opt.debug:
+                self.log.debug('Dispatching new scan issue details via %s',
+                               dispatch.__class__.__name__)
+
+            dispatch.newScanIssue(issue)
 
 
 class PluginDispatcher(Component):
