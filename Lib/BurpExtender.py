@@ -35,7 +35,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         return '<BurpExtender at %#x>' % (id(self),)
 
 
-    def component_activated(self, component):
+    def componentActivated(self, component):
         component.burp = self
 
 

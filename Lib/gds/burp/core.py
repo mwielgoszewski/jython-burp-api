@@ -101,7 +101,7 @@ class ComponentMeta(type):
         if self is None:
             self = cls.__new__(cls)
             self.compmgr = compmgr
-            compmgr.component_activated(self)
+            compmgr.componentActivated(self)
             self.__init__()
             # Only register the instance once it is fully initialized (#9418)
             compmgr.components[cls] = self
@@ -156,7 +156,7 @@ class ComponentManager(object):
         return the existing instance if the component has already been
         activated.
         """
-        if not self.is_enabled(cls):
+        if not self.isEnabled(cls):
             return None
         component = self.components.get(cls)
         if not component:
@@ -169,13 +169,13 @@ class ComponentManager(object):
                                 (cls, e))
         return component
 
-    def is_enabled(self, cls):
+    def isEnabled(self, cls):
         """Return whether the given component class is enabled."""
         if cls not in self.enabled:
-            self.enabled[cls] = self.is_component_enabled(cls)
+            self.enabled[cls] = self.isComponentEnabled(cls)
         return self.enabled[cls]
 
-    def disable_component(self, component):
+    def disableComponent(self, component):
         """Force a component to be disabled.
 
         :param component: can be a class or an instance.
@@ -185,12 +185,12 @@ class ComponentManager(object):
         self.enabled[component] = False
         self.components[component] = None
 
-    def component_activated(self, component):
+    def componentActivated(self, component):
         """Can be overridden by sub-classes so that special
         initialization for components can be provided.
         """
 
-    def is_component_enabled(self, cls):
+    def isComponentEnabled(self, cls):
         """Can be overridden by sub-classes to veto the activation of
         a component.
 
