@@ -1,5 +1,3 @@
-import java.io.File;
-
 import org.python.util.PythonInterpreter;
 
 public class JythonFactory
