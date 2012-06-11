@@ -65,6 +65,14 @@ class BurpExtender(IBurpExtender, ComponentManager):
         parser.add_option('-f', '--file', metavar='FILE',
                           help='Restore Burp state from FILE on startup')
 
+        parser.add_option('-d', '--debug',
+                          action='store_true',
+                          help='Set log level to DEBUG')
+
+        parser.add_option('-v', '--verbose',
+                          action='store_true',
+                          help='Set log level to INFO')
+
         parser.add_option('-P', '--python-path',
                           default='',
                           help='Set PYTHONPATH used by Jython')
@@ -74,6 +82,14 @@ class BurpExtender(IBurpExtender, ComponentManager):
                           help='Disable hot-reloading when a file is changed')
 
         opt, args = parser.parse_args(list(args))
+
+        if opt.debug:
+            logging.basicConfig(format='%(asctime)-15s - %(levelname)s - %(message)s',
+                                level=logging.DEBUG)
+
+        elif opt.verbose:
+            logging.basicConfig(format='%(asctime)-15s - %(levelname)s - %(message)s',
+                                level=logging.INFO)
 
         if opt.interactive:
             from java.util import Properties

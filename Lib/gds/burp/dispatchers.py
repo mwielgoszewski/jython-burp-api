@@ -55,9 +55,11 @@ class PluginDispatcher(Component):
                           'Request' if messageIsRequest else 'Response'])
 
         for handler in getattr(self, handlers):
-            self.log.debug('Dispatching handler via %s: %s.%s(%r)',
-                           toolName, handler.__class__.__name__,
-                           method, request)
+            if self.burp.opt.debug:
+                self.log.debug('Dispatching handler via %s: %s.%s(%r)',
+                               toolName, handler.__class__.__name__,
+                               method, request)
+
             getattr(handler, method)(request)
 
         return
