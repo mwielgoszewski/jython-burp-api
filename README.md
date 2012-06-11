@@ -91,12 +91,12 @@ the new menu item should be available in Burp:
 Dependencies
 ------------
 - [Burp Suite](http://portswigger.net/burp/download.html) (free or professional)
-- [Jython 2.5+](http://www.jython.org/downloads.html)
+- [Jython 2.7+](http://www.jython.org/)
 
 
 Installation / Running
 ----------------------
-1. Install [Jython 2.5+](http://www.jython.org/downloads.html) - I prefer the standalone jar option
+1. Install [Jython 2.7+](http://www.jython.org/) - I prefer the standalone jar option
 2. `git clone git://github.com/mwielgoszewski/jython-burp-api.git`
 3. `cd jython-burp-api/`
 4. Copy Burp Suite jar file(s) into current directory
