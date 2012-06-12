@@ -249,7 +249,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         return NewScanIssueDispatcher(self).newScanIssue(issue)
 
 
-    def processHttpMessage(self, toolName, messageIsRequest, request):
+    def processHttpMessage(self, toolName, messageIsRequest, messageInfo):
         '''
         This method is invoked whenever any of Burp's tools makes an HTTP
         request or receives a response. It allows extensions to intercept
@@ -285,8 +285,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
                                                       'anotherstring')
 
         '''
-        PluginDispatcher(self).processHttpMessage(
-            toolName, messageIsRequest, HttpRequest(request, _burp=self))
+        return PluginDispatcher(self).processHttpMessage(
+            toolName, messageIsRequest, messageInfo)
 
 
     def getProxyHistory(self, *args):

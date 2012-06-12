@@ -13,6 +13,8 @@ from .api import INewScanIssueHandler, \
     ISpiderRequestHandler, ISpiderResponseHandler
 
 from .core import Component, ExtensionPoint
+from .decorators import reify
+from .models import HttpRequest
 
 
 class NewScanIssueDispatcher(Component):
@@ -51,19 +53,33 @@ class PluginDispatcher(Component):
     spiderResponse = ExtensionPoint(ISpiderResponseHandler)
 
 
-    def processHttpMessage(self, toolName, messageIsRequest, request):
+    def __init__(self):
+        self._request = None
+
+
+    @reify
+    def request(self):
+        if self._request is not None:
+            self._request = HttpRequest(self._request, _burp=self.burp)
+
+        return self._request
+
+
+    def processHttpMessage(self, toolName, messageIsRequest, messageInfo):
         handlers = ''.join([toolName,
                             'Request' if messageIsRequest else 'Response'])
 
         method = ''.join(['process',
                           'Request' if messageIsRequest else 'Response'])
 
+        self._request = messageInfo
+
         for handler in getattr(self, handlers):
             if self.burp.opt.debug:
                 self.log.debug('Dispatching handler via %s: %s.%s(%r)',
                                toolName, handler.__class__.__name__,
-                               method, request)
+                               method, self.request)
 
-            getattr(handler, method)(request)
+            getattr(handler, method)(self.request)
 
         return
