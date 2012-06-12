@@ -68,32 +68,106 @@ class HttpRequest(object):
         return '<HttpRequest [%s]>' % (self.url.path,)
 
 
-    @reify
+    @property
     def host(self):
-        if self._messageInfo is not None:
+        '''
+        Returns the name of the application host.
+        '''
+        if self._messageInfo is not None and \
+            self._host != self._messageInfo.getHost():
             self._host = self._messageInfo.getHost()
 
         return self._host
 
 
-    @reify
-    def port(self):
+    @host.setter
+    def host(self, host):
+        '''
+        Sets the name of the application host to which the request
+        should be sent.
+
+        Note: This method generally can only be used before the
+        message has been forwarded to the application, and not in
+        read-only contexts.
+
+        :param host: The name of the application host to which the
+        request should be sent.
+        '''
         if self._messageInfo is not None:
+            self._messageInfo.setHost(host)
+
+        return
+
+
+    @property
+    def port(self):
+        '''
+        Returns the port number used by the application.
+        '''
+        if self._messageInfo is not None and \
+            self._port != self._messageInfo.getPort():
             self._port = self._messageInfo.getPort()
 
         return self._port
 
 
-    @reify
-    def protocol(self):
+    @port.setter
+    def port(self, port):
+        '''
+        Sets the port number to which the request should be sent.
+
+        Note: This method generally can only be used before the
+        message has been forwarded to the application, and not in
+        read-only contexts.
+
+        :param port: The port number to which the request should be
+        sent.
+        '''
         if self._messageInfo is not None:
+            self._messageInfo.setPort(port)
+
+        return
+
+
+    @property
+    def protocol(self):
+        '''
+        Returns the protocol used by the application.
+        '''
+        if self._messageInfo is not None and \
+            self._protocol != self._messageInfo.getProtocol():
             self._protocol = self._messageInfo.getProtocol()
 
         return self._protocol
 
 
+    @protocol.setter
+    def protocol(self, protocol):
+        '''
+        Sets the protocol which should be used by the request.
+
+        Note: This method generally can only be used before the
+        message has been forwarded to the application, and not in
+        read-only contexts.
+
+        :param protocol: The protocol which should be used by the
+        request. Valid values are "http" and "https".
+        '''
+        if self._messageInfo is not None:
+            self._messageInfo.setProtocol(protocol)
+
+        return
+
+
     @reify
     def url(self):
+        '''
+        The URL requested in this HTTP request.
+
+        Note: This is a **read-only** attribute.
+
+        :returns: :class:`~urlparse.ParseResult` object.
+        '''
         if self._messageInfo is not None:
             self._url = urlparse(self._messageInfo.getUrl().toString())
 
@@ -102,6 +176,13 @@ class HttpRequest(object):
 
     @reify
     def cookies(self):
+        '''
+        The HTTP Cookies sent in this request.
+
+        Note: This is a **read-only** attribute.
+
+        :returns: :class:`~Cookie.SimpleCookie` object.
+        '''
         self._cookies = SimpleCookie(self.headers.get('cookie', ''))
         return self._cookies
 
@@ -111,6 +192,8 @@ class HttpRequest(object):
         '''
         The HTTP headers sent in this request. Headers are accessible
         by their header names (case insensitive).
+
+        Note: This is a **read-only** attribute.
         '''
         self._headers = CaseInsensitiveDict(self._headers)
         return self._headers
@@ -121,6 +204,8 @@ class HttpRequest(object):
         '''
         Parameters parsed into a dictionary based on type (i.e., query,
         body, etc.)
+
+        Note: This is a **read-only** attribute.
         '''
         self._parameters = _parse_parameters(self)
         return self._parameters
@@ -130,6 +215,8 @@ class HttpRequest(object):
     def content_type(self):
         '''
         Content-Type of the HTTP request.
+
+        Note: This is a **read-only** attribute.
         '''
         return self.headers.get('content-type', '')
 
@@ -138,6 +225,8 @@ class HttpRequest(object):
     def is_secure(self):
         '''
         True if the HTTP request was sent over HTTPS.
+
+        Note: This is a **read-only** attribute.
         '''
         return True if self.protocol == 'https' else False
 
@@ -170,7 +259,7 @@ class HttpRequest(object):
     @property
     def comment(self):
         '''
-        Get comment from underlying IHttpRequestResponse object.
+        Returns the user-annotated comment for this item, if applicable.
         '''
         if self._messageInfo:
             return self._messageInfo.getComment()
@@ -181,7 +270,9 @@ class HttpRequest(object):
     @comment.setter
     def comment(self, comment):
         '''
-        Get comment from underlying IHttpRequestResponse object.
+        Sets the user-annotated comment for this item.
+
+        :param comment: The comment to be associated with this item.
         '''
         if self._messageInfo:
             return self._messageInfo.setComment(comment)
@@ -192,7 +283,7 @@ class HttpRequest(object):
     @property
     def highlight(self):
         '''
-        Get color of the underlying IHttpRequestResponse object.
+        Returns the user-annotated color for this item, if applicable.
         '''
         if self._messageInfo:
             return self._messageInfo.getHighlight()
@@ -203,9 +294,11 @@ class HttpRequest(object):
     @highlight.setter
     def highlight(self, color):
         '''
-        Set color of the underlying IHttpRequestResponse object.
+        Sets the user-annotated color for this item.
 
-        colors: red, orange, yellow, green, cyan, blue, pink, magenta, gray
+        :param color: The color to be associated with this item.
+        Valid values are: red, orange, yellow, green, cyan, blue, pink,
+        magenta, gray.
         '''
         if self._messageInfo:
             self._messageInfo.setHighlight(color)
@@ -247,6 +340,13 @@ class HttpResponse(object):
 
     @reify
     def cookies(self):
+        '''
+        The HTTP Cookies set in this response.
+
+        Note: This is a **read-only** attribute.
+
+        :returns: :class:`~Cookie.SimpleCookie` object.
+        '''
         self._cookies = SimpleCookie(self.headers.get('set-cookie', ''))
         return self._cookies
 
@@ -256,6 +356,8 @@ class HttpResponse(object):
         '''
         The HTTP headers received in this response. Headers are accessible
         by their header names (case insensitive).
+
+        Note: This is a **read-only** attribute.
         '''
         self._headers = CaseInsensitiveDict(self._headers)
         return self._headers
@@ -265,6 +367,8 @@ class HttpResponse(object):
     def content_type(self):
         '''
         Content-Type of the HTTP response.
+
+        Note: This is a **read-only** attribute.
         '''
         return self.headers.get('content-type', '')
 
