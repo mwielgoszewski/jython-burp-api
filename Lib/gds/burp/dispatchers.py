@@ -27,6 +27,8 @@ class NewScanIssueDispatcher(Component):
 
             dispatch.newScanIssue(issue)
 
+        return
+
 
 class PluginDispatcher(Component):
 
