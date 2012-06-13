@@ -15,6 +15,4 @@ class MenuItem(IMenuItemHandler):
     def __init__(self, _burp):
         self._burp = _burp
         self._burp.registerMenuItem(self.CAPTION, self)
-        self._burp.issueAlert('registered menu item: %r' % (self.CAPTION,))
-
-
+        self._burp.issueAlert('Registered menu item: %r' % (self.CAPTION,))
