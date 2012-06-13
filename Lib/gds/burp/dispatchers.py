@@ -66,7 +66,7 @@ class PluginDispatcher(Component):
 
 
     def processHttpMessage(self, toolName, messageIsRequest, messageInfo):
-        handlers = ''.join([toolName,
+        handlers = ''.join([toolName.lower(),
                             'Request' if messageIsRequest else 'Response'])
 
         method = ''.join(['process',
