@@ -15,7 +15,7 @@ class PluginMonitorThread(Thread):
         self.hashes = {}
 
         for plugin in self._burp.monitoring:
-            self._burp.issueAlert('monitoring %s' % (plugin.get('class'),))
+            self._burp.issueAlert('Monitoring %s' % (plugin.get('class'),))
             self._monitor_plugin(plugin)
 
     def _has_changed(self, filename):
@@ -30,7 +30,7 @@ class PluginMonitorThread(Thread):
     def _monitor_plugin(self, plugin):
         if self._has_changed(plugin.get('filename')):
             if plugin.get('reloaded', False):
-                self._burp.issueAlert('reloading %s' % (plugin.get('class'),))
+                self._burp.issueAlert('Reloading %s' % (plugin.get('class'),))
             self._reload(plugin)
 
         return
@@ -39,7 +39,7 @@ class PluginMonitorThread(Thread):
         instance = plugin.get('instance')
 
         if instance() is None:
-            self._burp.issueAlert('reference to object %s.%s no longer '
+            self._burp.issueAlert('Reference to object %s.%s no longer '
                 'exists' % (plugin.get('module'), plugin.get('class'),))
             return
 

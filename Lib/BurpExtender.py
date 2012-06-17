@@ -95,12 +95,16 @@ class BurpExtender(IBurpExtender, ComponentManager):
         opt, args = parser.parse_args(list(args))
 
         if opt.debug:
-            logging.basicConfig(format='%(asctime)-15s - %(levelname)s - %(message)s',
-                                level=logging.DEBUG)
+            logging.basicConfig(
+                filename='jython-burp.log',
+                format='%(asctime)-15s - %(levelname)s - %(message)s',
+                level=logging.DEBUG)
 
         elif opt.verbose:
-            logging.basicConfig(format='%(asctime)-15s - %(levelname)s - %(message)s',
-                                level=logging.INFO)
+            logging.basicConfig(
+                filename='jython-burp.log',
+                format='%(asctime)-15s - %(levelname)s - %(message)s',
+                level=logging.INFO)
 
         self.config = Configuration(opt.config)
 
@@ -115,7 +119,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
             if opt.python_path:
                 post_properties['python.path'] = opt.python_path
 
-            PythonInterpreter.initialize(pre_properties, post_properties, sys.argv[1:])
+            PythonInterpreter.initialize(
+                pre_properties, post_properties, sys.argv[1:])
 
             self.console = JLineConsole()
             self.console.exec('import __builtin__ as __builtins__')
@@ -146,9 +151,9 @@ class BurpExtender(IBurpExtender, ComponentManager):
         if self.opt.file:
             if os.path.isfile(self.opt.file):
                 self.restoreState(self.opt.file)
-                self.issueAlert('restored state from %s' % (self.opt.file,))
+                self.issueAlert('Restored state from %s' % (self.opt.file,))
             else:
-                self.issueAlert('could not restore state from %s:'
+                self.issueAlert('Could not restore state from %s:'
                                 'file does not exist' % (self.opt.file,))
 
         if self.opt.interactive:
@@ -158,7 +163,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
             self.monitor = PluginMonitorThread(self)
             self.monitor.start()
 
-        self.issueAlert('burp extender ready...')
+        self.issueAlert('Burp extender ready...')
 
         return
 
@@ -283,8 +288,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
         hook requests sent via Intruder or Scanner, and only hook responses
         received via Proxy tool.
 
-        An example is provided below that only modifies requests as they are
-        made via Repeater and Intruder.
+        An example is provided below that only modifies requests as they
+        are made via Repeater and Intruder.
 
         .. code-block:: python
             class MyPlugin(Component):
