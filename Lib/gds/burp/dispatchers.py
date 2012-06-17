@@ -12,9 +12,11 @@ from .api import INewScanIssueHandler, \
     ISequencerRequestHandler, ISequencerResponseHandler, \
     ISpiderRequestHandler, ISpiderResponseHandler
 
+from .config import OrderedExtensionsOption
 from .core import Component, ExtensionPoint
-from .decorators import reify
 from .models import HttpRequest
+
+import logging
 
 
 class NewScanIssueDispatcher(Component):
@@ -23,7 +25,7 @@ class NewScanIssueDispatcher(Component):
 
     def newScanIssue(self, issue):
         for dispatch in self.dispatchers:
-            if self.burp.opt.debug:
+            if self.log.isEnabledFor(logging.DEBUG):
                 self.log.debug('Dispatching new scan issue details via %s',
                                dispatch.__class__.__name__)
 
@@ -34,35 +36,89 @@ class NewScanIssueDispatcher(Component):
 
 class PluginDispatcher(Component):
 
-    intruderRequest = ExtensionPoint(IIntruderRequestHandler)
-    intruderResponse = ExtensionPoint(IIntruderResponseHandler)
+    intruderRequest = OrderedExtensionsOption('plugins', 'intruder.request',
+         IIntruderRequestHandler, None, True,
+         '''List of components implmenting the `IIntruderRequestHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP requests directly before Burp Intruder
+         sends it on the wire.''')
 
-    proxyRequest = ExtensionPoint(IProxyRequestHandler)
-    proxyResponse = ExtensionPoint(IProxyResponseHandler)
+    intruderResponse = OrderedExtensionsOption('plugins', 'intruder.response',
+        IIntruderResponseHandler, None, True,
+         '''List of components implmenting the `IIntruderResponseHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP responses directly after Burp Intruder
+         receives if off the wire.''')
 
-    repeaterRequest = ExtensionPoint(IRepeaterRequestHandler)
-    repeaterResponse = ExtensionPoint(IRepeaterResponseHandler) 
+    proxyRequest = OrderedExtensionsOption('plugins', 'proxy.request',
+         IProxyRequestHandler, None, True,
+         '''List of components implmenting the `IProxyRequestHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP requests directly before Burp Proxy
+         sends it on the wire.''')
 
-    scannerRequest = ExtensionPoint(IScannerRequestHandler)
-    scannerResponse = ExtensionPoint(IScannerResponseHandler)
+    proxyResponse = OrderedExtensionsOption('plugins', 'proxy.response',
+        IProxyResponseHandler, None, True,
+         '''List of components implmenting the `IProxyResponseHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP responses directly after Burp Proxy
+         receives if off the wire.''')
 
-    sequencerRequest = ExtensionPoint(ISequencerRequestHandler)
-    sequencerResponse = ExtensionPoint(ISequencerResponseHandler)
+    repeaterRequest = OrderedExtensionsOption('plugins', 'repeater.request',
+         IRepeaterRequestHandler, None, True,
+         '''List of components implmenting the `IRepeaterRequestHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP requests directly before Burp Repeater
+         sends it on the wire.''')
 
-    spiderRequest = ExtensionPoint(ISpiderRequestHandler)
-    spiderResponse = ExtensionPoint(ISpiderResponseHandler)
+    repeaterResponse = OrderedExtensionsOption('plugins', 'repeater.response',
+        IRepeaterResponseHandler, None, True,
+         '''List of components implmenting the `IRepeaterResponseHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP responses directly after Burp Repeater
+         receives if off the wire.''')
 
+    scannerRequest = OrderedExtensionsOption('plugins', 'scanner.request',
+         IScannerRequestHandler, None, True,
+         '''List of components implmenting the `IScannerRequestHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP requests directly before Burp Scanner
+         sends it on the wire.''')
 
-    def __init__(self):
-        self._request = None
+    scannerResponse = OrderedExtensionsOption('plugins', 'scanner.response',
+        IScannerResponseHandler, None, True,
+         '''List of components implmenting the `IScannerResponseHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP responses directly after Burp Scanner
+         receives if off the wire.''')
 
+    sequencerRequest = OrderedExtensionsOption('plugins', 'sequencer.request',
+         ISequencerRequestHandler, None, True,
+         '''List of components implmenting the `ISequencerRequestHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP requests directly before Burp Sequencer
+         sends it on the wire.''')
 
-    @reify
-    def request(self):
-        if self._request is not None:
-            self._request = HttpRequest(self._request, _burp=self.burp)
+    sequencerResponse = OrderedExtensionsOption('plugins', 'sequencer.response',
+        ISequencerResponseHandler, None, True,
+         '''List of components implmenting the `ISequencerResponseHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP responses directly after Burp Sequencer
+         receives if off the wire.''')
 
-        return self._request
+    spiderRequest = OrderedExtensionsOption('plugins', 'spider.request',
+         ISpiderRequestHandler, None, True,
+         '''List of components implmenting the `ISpiderRequestHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP requests directly before Burp Spider
+         sends it on the wire.''')
+
+    spiderResponse = OrderedExtensionsOption('plugins', 'spider.response',
+        ISpiderResponseHandler, None, True,
+         '''List of components implmenting the `ISpiderResponseHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP responses directly after Burp Spider
+         receives if off the wire.''')
 
 
     def processHttpMessage(self, toolName, messageIsRequest, messageInfo):
@@ -72,14 +128,14 @@ class PluginDispatcher(Component):
         method = ''.join(['process',
                           'Request' if messageIsRequest else 'Response'])
 
-        self._request = messageInfo
+        request = HttpRequest(messageInfo, _burp=self.burp)
 
         for handler in getattr(self, handlers):
-            if self.burp.opt.debug:
+            if self.log.isEnabledFor(logging.DEBUG):
                 self.log.debug('Dispatching handler via %s: %s.%s(%r)',
                                toolName, handler.__class__.__name__,
-                               method, self.request)
+                               method, request)
 
-            getattr(handler, method)(self.request)
+            getattr(handler, method)(request)
 
         return

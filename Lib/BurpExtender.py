@@ -20,11 +20,17 @@ import sys
 import weakref
 
 from gds.burp import HttpRequest
+from gds.burp.config import Configuration
 from gds.burp.core import ComponentManager
 from gds.burp.decorators import callback
 from gds.burp.dispatchers import NewScanIssueDispatcher, PluginDispatcher
 from gds.burp.menu import ConsoleMenu
 from gds.burp.monitor import PluginMonitorThread
+
+
+logging._srcfile = None
+logging.logThreads = 0
+logging.logProcesses = 0
 
 
 class BurpExtender(IBurpExtender, ComponentManager):
@@ -40,6 +46,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
     def componentActivated(self, component):
         component.burp = self
+        component.config = self.config
         component.log = self.log
 
 
@@ -77,6 +84,10 @@ class BurpExtender(IBurpExtender, ComponentManager):
                           default='',
                           help='Set PYTHONPATH used by Jython')
 
+        parser.add_option('-C', '--config',
+                          default='burp.ini',
+                          help='Specify alternate jython-burp config file')
+
         parser.add_option('--disable-reloading',
                           action='store_true',
                           help='Disable hot-reloading when a file is changed')
@@ -90,6 +101,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
         elif opt.verbose:
             logging.basicConfig(format='%(asctime)-15s - %(levelname)s - %(message)s',
                                 level=logging.INFO)
+
+        self.config = Configuration(opt.config)
 
         if opt.interactive:
             from java.util import Properties
