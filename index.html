@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Jython-burp-api by mwielgoszewski</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Jython-burp-api</h1>
+        <p class="header">Develop Burp extensions in Jython</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/mwielgoszewski/jython-burp-api/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/mwielgoszewski/jython-burp-api/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/mwielgoszewski/jython-burp-api">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/mwielgoszewski">mwielgoszewski</a></p>
+
+
+      </header>
+      <section>
+        <h1>jython-burp-api (burpy)</h1>
+
+<p>Burpy is an ISC Licensed library, written in Jython, Java and Python.</p>
+
+<p>Burpy exposes a Jython interface to the popular Burp Suite web security 
+testing tool, as an alternative to <a href="http://tduehr.github.com/buby/">Buby</a> 
+for those testers who prefer Python over Ruby.</p>
+
+<h2>Features</h2>
+
+<p>By default, we monitor a list of registered menu items for any changes.
+If a file has changed (i.e., it's last modification time was updated), the
+API will automatically attempt to reload it. This is great for active
+development and debugging of Burp extensions.</p>
+
+<h2>Examples</h2>
+
+<p>To start an interactive console, simply pass the -i command line argument
+when starting Burp.  You can also click one or multiple items in Burp and
+assign them to the <code>items</code> local variable like so:</p>
+
+<pre><code>$ java -cp java/src/:jython.jar:burpsuite_pro_v1.07.jar burp.StartBurp -i
+... launching Jython/Burp interpeter ...
+
+&gt;&gt;&gt; Burp
+&lt;BurpExtender 0x2&gt;
+&gt;&gt;&gt; Burp.getProxyHistory()
+[&lt;HttpRequest [/]&gt;, ...
+
+&gt;&gt;&gt; items
+[&lt;HttpRequest [/firefox/headlines.xml]&gt;]
+&gt;&gt;&gt; items[0].headers
+{'Accept-Language': 'en-us,en;q=0.5', ...
+&gt;&gt;&gt; items[0].response
+&lt;HttpResponse [302]&gt;
+&gt;&gt;&gt; len(items[0].response)
+256
+</code></pre>
+
+<p>and many more!</p>
+
+<h2>Adding a simple menu item</h2>
+
+<p>Check out the <a href="https://github.com/mwielgoszewski/jython-burp-api/blob/master/Lib/gds/burp/menu/console.py">ConsoleMenu</a>
+class for an example of how to add menu item's to Burp's context menu.
+Below is an example of how to use one in your code.</p>
+
+<pre><code>from gds.burp.menu.base import MenuItem
+
+class MyMenuItem(MenuItem):
+    CAPTION = 'my caption'
+
+    def __init__(self, _burp):
+        MenuItem.__init__(self, _burp)
+
+    @staticmethod
+    def menuItemClicked(self, menuItemCaption, messageInfo):
+        print('clicked %s' % (menuItemCaption,))
+</code></pre>
+
+<p>To add your new menu (MyMenuItem) to Burp's context menu, we need to pass a
+reference of the BurpExtender object to MyMenuItem's <code>__init__</code> constructor.
+For example, in BurpExtender class, we register the ConsoleMenu within the
+registerExtenderCallbacks method (passing self as a reference):</p>
+
+<pre><code>if self.opt.interactive:
+    ConsoleMenu(self)
+</code></pre>
+
+<p>Note that when we defined the menuItemClicked method within MyMenuItem, we
+annotated it with <code>@staticmethod</code>. This allows for the plugin monitor to
+hot-swap out our method on the registered menu item without having to
+re-initiaize it. If you plan on loading and initializing your menu item from
+the interactive interpreter session, do not use @staticmethod. Once initialized
+the new menu item should be available in Burp:</p>
+
+<pre><code>&gt;&gt;&gt; class MyMenuItem(MenuItem):
+...     CAPTION = 'my caption'
+...     def __init__(self, _burp):
+...         MenuItem.__init__(self, _burp)
+...     def menuItemClicked(self, menuItemCaption, messageInfo):
+...         print('clicked %s' % (menuItemCaption,))
+... 
+&gt;&gt;&gt; MyMenuItem(Burp)
+</code></pre>
+
+<h2>Dependencies</h2>
+
+<ul>
+<li>
+<a href="http://portswigger.net/burp/download.html">Burp Suite</a> (free or professional)</li>
+<li><a href="http://www.jython.org/downloads.html">Jython 2.5+</a></li>
+</ul><h2>Installation / Running</h2>
+
+<ol>
+<li>Install <a href="http://www.jython.org/downloads.html">Jython 2.5+</a> - I prefer the standalone jar option</li>
+<li><code>git clone git://github.com/mwielgoszewski/jython-burp-api.git</code></li>
+<li><code>cd jython-burp-api/</code></li>
+<li>Copy Burp Suite jar file(s) into current directory</li>
+<li>
+<p>Compile BurpExtender files:</p>
+
+<p><code>$ javac -cp burpsuite_v1.4.01.jar:jython.jar java/src/*.java</code></p>
+</li>
+<li>
+<p>Start Burp by adding jython, burp extender and burp onto CLASSPATH:</p>
+
+<p><code>$ java -cp java/src/:jython.jar:burpsuite_v1.4.01.jar burp.StartBurp -i</code></p>
+</li>
+</ol><p><strong>Note:</strong> If Jython is <em>outside</em> the current directory (assuming you followed the instructions
+and you're in jython-burp-api/), you'll need to add Lib/ onto your Java classpath like 
+so (ht Jon Passki, thanks!):</p>
+
+<pre><code>$ java -cp Lib:java/src:/path/to/jython.jar:burp.jar burp.StartBurp -i
+</code></pre>
+
+<h2>Contribute</h2>
+
+<ol>
+<li>Check for open issues or open a fresh issue to start a discussion around
+a feature idea or a bug.</li>
+<li>Fork the repository on Github to start making your changes in a separate branch.</li>
+<li>Write a test which shows that the bug was fixed or that the feature works as expected.</li>
+<li>Send a pull request and bug the maintainer until it gets merged and published. :)</li>
+</ol>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+		
+  </body>
+</html>
