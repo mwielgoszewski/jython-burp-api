@@ -14,9 +14,6 @@ from ..models import HttpRequest
 class ConsoleMenu(MenuItem):
     CAPTION = 'assign to local variable `items` in console'
 
-    def __init__(self, _burp):
-        MenuItem.__init__(self, _burp)
-
     @staticmethod
     def menuItemClicked(self, menuItemCaption, messageInfo):
         requests = []
