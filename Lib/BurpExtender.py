@@ -12,6 +12,7 @@ from org.python.util import JLineConsole, PythonInterpreter
 from burp import IBurpExtender, IMenuItemHandler
 
 from threading import Thread
+import inspect
 import logging
 import os
 import re
@@ -235,11 +236,11 @@ class BurpExtender(IBurpExtender, ComponentManager):
         # don't monitor objects initialized in the interpreter
         if menuItemHandler.__module__ != '__main__':
             _module = menuItemHandler.__module__
-            _filename = sys.modules[_module].__file__
+            _filename = inspect.getsourcefile(menuItemHandler.__class__)
             _class = menuItemHandler.__class__.__name__
 
             self.monitoring.append({
-                'filename': _filename.replace('$py.class', '.py'),
+                'filename': _filename,
                 'class': _class,
                 'module': _module,
                 'type': 'IMenuItemHandler',
