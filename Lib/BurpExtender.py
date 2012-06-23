@@ -21,7 +21,7 @@ import sys
 import weakref
 
 from gds.burp import HttpRequest
-from gds.burp.config import Configuration
+from gds.burp.config import Configuration, ConfigSection
 from gds.burp.core import ComponentManager
 from gds.burp.decorators import callback
 from gds.burp.dispatchers import NewScanIssueDispatcher, PluginDispatcher
@@ -35,6 +35,9 @@ logging.logProcesses = 0
 
 
 class BurpExtender(IBurpExtender, ComponentManager):
+
+    menus = ConfigSection('menus', '')
+
     def __init__(self):
         ComponentManager.__init__(self)
         self.log = logging.getLogger(self.__class__.__name__)
@@ -159,6 +162,11 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         if self.opt.interactive:
             ConsoleMenu(_burp=self)
+
+        for module, _ in self.menus.options():
+            if self.menus.getbool(module) is True:
+                for MenuItemHandler in _get_menus(module):
+                    MenuItemHandler(self)
 
         if not self.opt.disable_reloading:
             self.monitor = PluginMonitorThread(self)
@@ -464,6 +472,33 @@ class ConsoleThread(Thread):
                 self.console.interact()
             except Exception:
                 pass
+
+
+def _get_menus(module):
+    module = module.split('.')
+    klass = module.pop()
+
+    if klass == '*':
+        menus = []
+
+        m = __import__('.'.join(module), globals(), locals(), module[-1])
+
+        for name, obj in inspect.getmembers(m):
+            if name == 'MenuItem':
+                continue
+
+            if inspect.isclass(obj) and hasattr(obj, 'menuItemClicked'):
+                if inspect.isfunction(getattr(obj, 'menuItemClicked')):
+                    menus.append(obj)
+                else:
+                    logging.error('%s.%s implements IMenuItemHandler, but '
+                        'menuItemClicked is not a @staticmethod',
+                        '.'.join(module), name)
+
+        return menus
+
+    m = __import__('.'.join(module), globals(), locals(), module[-1])
+    return [getattr(m, klass)]
 
 
 def _sigbreak(signum, frame):
