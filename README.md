@@ -56,10 +56,13 @@ Below is an example of how to use one in your code.
             print('clicked %s' % (menuItemCaption,))
 
 
-To add your new menu (MyMenuItem) to Burp's context menu, we simply specify it
-as an option under [menus] section in burp.ini and set it to enabled.
+To add your new menu (MyMenuItem) to Burp's context menu, specify it as an
+option under [menus] section in burp.ini and set it to enabled. If you wish
+to disable the built-in ConsoleMenu item that's registered, simply set it to
+disabled, like so:
 
     [plugins]
+    gds.burp.menu.console.ConsoleMenu = disabled
     myplugins.MyMenuItem = enabled
 
 
