@@ -68,10 +68,7 @@ disabled, like so:
 
 Once Burp is loaded, the new menu item should be available in Burp. You can
 also register menu items at runtime by initializing them within the interactive
-console. Note however, menu items registered in the console cannot be reloaded
-since there is no actual file to watch for changes. Also, keep in mind that
-in order to load the menu, we need to import it, thus requiring it to be in our
-class path (if you keep your plugins under `Lib/`, you should be good).
+console.
 
 
 	>>> class MyMenuItem(MenuItem):
@@ -81,6 +78,11 @@ class path (if you keep your plugins under `Lib/`, you should be good).
 	... 
 	>>> MyMenuItem(Burp)
 
+
+Note however, menu items registered in the console cannot be reloaded since
+there is no actual file to watch for changes. Also, keep in mind that in
+order to load the menu, we need to import it, thus requiring it to be in our
+class path (if you keep your plugins under `Lib/`, you should be good).
 
 Dependencies
 ------------
