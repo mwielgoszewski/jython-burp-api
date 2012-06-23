@@ -12,23 +12,22 @@ class PluginMonitorThread(Thread):
         Thread.__init__(self, name='plugin-monitor')
         self._burp = _burp
         self.interval = interval
-        self.hashes = {}
 
         for plugin in self._burp.monitoring:
             self._burp.issueAlert('Monitoring %s' % (plugin.get('class'),))
             self._monitor_plugin(plugin)
 
-    def _has_changed(self, filename):
-        lastModified = File(filename).lastModified()
+    def _has_changed(self, plugin):
+        lastModified = File(plugin.get('filename')).lastModified()
 
-        if self.hashes.get(filename, -1) < lastModified:
-            self.hashes.update({filename: lastModified})
+        if plugin.get('modified', -1) < lastModified:
+            plugin['modified'] = lastModified
             return True
         else:
             return False
 
     def _monitor_plugin(self, plugin):
-        if self._has_changed(plugin.get('filename')):
+        if self._has_changed(plugin):
             if plugin.get('reloaded', False):
                 self._burp.issueAlert('Reloading %s' % (plugin.get('class'),))
             self._reload(plugin)
