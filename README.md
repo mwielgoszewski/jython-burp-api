@@ -59,17 +59,17 @@ Below is an example of how to use one in your code.
             print('clicked %s' % (menuItemCaption,))
 
 
-To add your new menu (MyMenuItem) to Burp's context menu, we need to pass a
-reference of the BurpExtender object to MyMenuItem's `__init__` constructor.
-For example, in BurpExtender class, we register the ConsoleMenu within the
-registerExtenderCallbacks method (passing self as a reference):
+To add your new menu (MyMenuItem) to Burp's context menu, we simply specify it
+as an option under [menus] section in burp.ini and set it to enabled.
+
+    [plugins]
+    myplugins.MyMenuItem = enabled
 
 
-    if self.opt.interactive:
-        ConsoleMenu(self)
-
-
-Once initialized the new menu item should be available in Burp:
+Once Burp is loaded, the new menu item should be available in Burp. You can
+also register menu items at runtime by initializing them within the interactive
+console. Note however, menu items registered in the console cannot be reloaded
+since there is no actual file to watch for changes.
 
 
 	>>> class MyMenuItem(MenuItem):

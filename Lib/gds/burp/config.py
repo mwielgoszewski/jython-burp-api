@@ -85,6 +85,7 @@ class Configuration(object):
     def __init__(self, filename, params={}):
         self.filename = filename
         self.parser = ConfigParser()
+        self.parser.optionxform = str
         self._old_sections = {}
         self.parents = []
         self._lastmtime = 0

@@ -160,9 +160,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
                 self.issueAlert('Could not restore state from %s:'
                                 'file does not exist' % (self.opt.file,))
 
-        if self.opt.interactive:
-            ConsoleMenu(_burp=self)
-
         for module, _ in self.menus.options():
             if self.menus.getbool(module) is True:
                 for MenuItemHandler in _get_menus(module):
