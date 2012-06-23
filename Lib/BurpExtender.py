@@ -478,11 +478,13 @@ def _get_menus(module):
     module = module.split('.')
     klass = module.pop()
 
-    if klass == '*':
-        menus = []
-
+    try:
         m = __import__('.'.join(module), globals(), locals(), module[-1])
+    except ImportError:
+        logging.error('Could not import module %s', '.'.join(module))
+        return []
 
+    if klass == '*':
         for name, obj in inspect.getmembers(m):
             if name == 'MenuItem':
                 continue
@@ -497,8 +499,11 @@ def _get_menus(module):
 
         return menus
 
-    m = __import__('.'.join(module), globals(), locals(), module[-1])
-    return [getattr(m, klass)]
+    try:
+        return [getattr(m, klass)]
+    except ImportError:
+        logging.error('Could not import class %s.%s', '.'.join(module), klass)
+        return []
 
 
 def _sigbreak(signum, frame):
