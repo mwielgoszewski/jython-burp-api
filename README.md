@@ -51,10 +51,7 @@ Below is an example of how to use one in your code.
     
     class MyMenuItem(MenuItem):
         CAPTION = 'my caption'
-
-        def __init__(self, _burp):
-            MenuItem.__init__(self, _burp)
-
+        
         def menuItemClicked(self, menuItemCaption, messageInfo):
             print('clicked %s' % (menuItemCaption,))
 
@@ -74,8 +71,6 @@ since there is no actual file to watch for changes.
 
 	>>> class MyMenuItem(MenuItem):
 	...     CAPTION = 'my caption'
-	...     def __init__(self, _burp):
-	...         MenuItem.__init__(self, _burp)
 	...     def menuItemClicked(self, menuItemCaption, messageInfo):
 	...         print('clicked %s' % (menuItemCaption,))
 	... 
