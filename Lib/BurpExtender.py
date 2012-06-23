@@ -64,6 +64,10 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         -i, --interactive   Run Burp in interactive mode (Jython Console)
         -f <FILE>           Restore from burp state file upon startup
+        -d, --debug         Set log level to DEBUG
+        -v, --verbose       Set log level to INFO
+        -C, --config        Specify an alternate config (default: burp.ini)
+        --disable-reloading Disable monitoring of plugins for changes
         -h
         '''
         from optparse import OptionParser
