@@ -485,6 +485,8 @@ def _get_menus(module):
         return []
 
     if klass == '*':
+        menus = []
+
         for name, obj in inspect.getmembers(m):
             if name == 'MenuItem':
                 continue
