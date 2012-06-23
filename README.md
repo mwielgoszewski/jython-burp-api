@@ -55,7 +55,6 @@ Below is an example of how to use one in your code.
         def __init__(self, _burp):
             MenuItem.__init__(self, _burp)
 
-        @staticmethod
         def menuItemClicked(self, menuItemCaption, messageInfo):
             print('clicked %s' % (menuItemCaption,))
 
@@ -70,12 +69,7 @@ registerExtenderCallbacks method (passing self as a reference):
         ConsoleMenu(self)
 
 
-Note that when we defined the menuItemClicked method within MyMenuItem, we
-annotated it with `@staticmethod`. This allows for the plugin monitor to
-hot-swap out our method on the registered menu item without having to
-re-initiaize it. If you plan on loading and initializing your menu item from
-the interactive interpreter session, do not use @staticmethod. Once initialized
-the new menu item should be available in Burp:
+Once initialized the new menu item should be available in Burp:
 
 
 	>>> class MyMenuItem(MenuItem):

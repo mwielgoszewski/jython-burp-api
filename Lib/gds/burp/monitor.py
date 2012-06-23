@@ -64,13 +64,10 @@ class PluginMonitorThread(Thread):
         Because Burp does not expose anyway to un-register an
         IMenuItemHandler, we need to get hold of the current instance
         and monkey patch the 'menuItemClicked' method with the newly
-        reloaded one. This requires annotating the 'menuItemClicked'
-        class method with the @staticmethod decorator.
+        reloaded one.
         '''
         menuItemClicked = getattr(menu_class, 'menuItemClicked')
-
-        instance.menuItemClicked = types.MethodType(
-                menuItemClicked, instance, menu_class)
+        types.MethodType(menuItemClicked, instance, menu_class)
 
         return
 

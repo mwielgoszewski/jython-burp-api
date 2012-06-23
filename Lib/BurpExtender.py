@@ -491,13 +491,9 @@ def _get_menus(module):
             if name == 'MenuItem':
                 continue
 
-            if inspect.isclass(obj) and hasattr(obj, 'menuItemClicked'):
-                if inspect.isfunction(getattr(obj, 'menuItemClicked')):
-                    menus.append(obj)
-                else:
-                    logging.error('%s.%s implements IMenuItemHandler, but '
-                        'menuItemClicked is not a @staticmethod',
-                        '.'.join(module), name)
+            if inspect.isclass(obj) and \
+                IMenuItemHandler in inspect.getmro(obj):
+                menus.append(obj)
 
         return menus
 
