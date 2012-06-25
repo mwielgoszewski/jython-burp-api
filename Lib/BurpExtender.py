@@ -507,7 +507,7 @@ def _get_menus(menu_module):
         return [getattr(m, klass)]
     except AttributeError:
         logging.error('Could not import %s from module %s',
-    r                 klass, '.'.join(module))
+                      klass, '.'.join(module))
 
         return []
 
