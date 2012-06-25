@@ -83,6 +83,59 @@ Also, keep in mind that in order to load the menu, we need to import it,
 thus requiring it to be in our class path. If you keep your plugins under the
 `Lib/` directory, you should be good.
 
+
+Processing HTTP requests/responses
+----------------------------------
+One of the methods exposed by the Burp Extender interface is `processHttpMessage`.
+This method, according to the API documentation *[..] is invoked whenever any of
+Burp's tools makes an HTTP or receives a response [..] For each request, the
+method is invoked after the request has been fully processed by the invoking
+tool and is about to be made on the network. For each response, the method is
+invoked after the response has been received from the network and before any
+processing is performed by the invoking tool.* To write a plugin to hook into
+one of these requests or responses, implement one of the interfaces from
+`gds.burp.api`, such as IRepeaterRequestHandler, IProxyResponseHandler, and the
+like. For example, the following plugin would hook requests as they are sent
+via Intruder and Scanner, and responses that come in Proxy and Intruder.
+
+    from gds.burp.api import IIntruderRequestHandler, IScannerRequestHandler
+    from gds.burp.api import IProxyResponseHandler, IIntruderResponseHandler
+    from gds.burp.core import Component, implements
+
+    class ExamplePlugin(Component):
+
+        implements(IIntruderRequestHandler, IIntruderResponseHandler,
+                   IScannerRequestHandler, IProxyResponseHandler)
+
+        def processRequest(self, request):
+            self.log.info("Request to %s sent through Intruder and Scanner",
+                          request.url.geturl())
+
+        def processResponse(self, request):
+            self.log.info("This response from %s was received via Proxy and Intruder",
+                          request.url.geturl()
+
+To use this plugin, we need to first enable it under the `[components]` section
+within `burp.ini`, as well as add it to the list of options under `[handlers]`
+in the order in which we want it to be processed. Options in the `[handlers]`
+section can be a comma separated list, specifying the order in which a plugin
+will be called. This allows you to decouple tools and configure their use at
+different times. If you are familiar with or have experience with request
+filter chains, such as in Java web apps, this should be immediately clear.
+
+    [components]
+    testplugin.ExamplePlugin = enabled
+
+    [handlers]
+    intruder.request = ExamplePlugin
+    intruder.response = ExamplePlugin
+    proxy.request = ExamplePlugin
+    proxy.response = ExamplePlugin
+
+Note, a plugin that implements an interface but is not enabled under
+`[components]` and/or is not listed in it's respective option in the `[handlers]`
+configuration configuration, will not get called.
+
 Dependencies
 ------------
 - [Burp Suite](http://portswigger.net/burp/download.html) (free or professional)
