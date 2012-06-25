@@ -10,7 +10,7 @@ for those testers who prefer Python over Ruby.
 Features
 --------
 By default, we monitor a list of registered menu items for any changes.
-If a file has changed (i.e., it's last modification time was updated), the
+If a file has changed (i.e., its last modification time was updated), the
 API will automatically attempt to reload it. This is great for active
 development and debugging of Burp extensions.
 
@@ -44,7 +44,7 @@ and many more!
 Adding a simple menu item
 -------------------------
 Check out the [ConsoleMenu](https://github.com/mwielgoszewski/jython-burp-api/blob/master/Lib/gds/burp/menu/console.py)
-class for an example of how to add menu item's to Burp's context menu.
+class for an example of how to add menu items to Burp's context menu.
 Below is an example of how to use one in your code.
 
     from gds.burp.menu.base import MenuItem
@@ -133,7 +133,7 @@ filter chains, such as in Java web apps, this should be immediately clear.
     proxy.response = ExamplePlugin
 
 Note, a plugin that implements an interface but is not enabled under
-`[components]` and/or is not listed in it's respective option in the `[handlers]`
+`[components]` and/or is not listed in its respective option in the `[handlers]`
 configuration configuration, will not get called.
 
 Dependencies
