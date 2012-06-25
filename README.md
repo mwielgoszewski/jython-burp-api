@@ -61,7 +61,7 @@ option under `[menus]` section in `burp.ini` and set it to enabled. If you wish
 to disable the built-in ConsoleMenu item that's registered, simply set it to
 disabled, like so:
 
-    [plugins]
+    [menus]
     gds.burp.menu.console.ConsoleMenu = disabled
     myplugins.MyMenuItem = enabled
 
