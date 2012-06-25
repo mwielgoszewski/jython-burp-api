@@ -10,11 +10,13 @@ import weakref
 class PluginMonitorThread(Thread):
     def __init__(self, _burp, interval=5):
         Thread.__init__(self, name='plugin-monitor')
-        self._burp = _burp
+        self.burp = self._burp = _burp
+        self.log = self.burp.log
         self.interval = interval
 
         for plugin in self._burp.monitoring:
-            self._burp.issueAlert('Monitoring %s' % (plugin.get('class'),))
+            self.burp.issueAlert('Monitoring %s' % (plugin.get('class'),))
+            self.log.debug('Monitoring %s', plugin.get('class'))
             self._monitor_plugin(plugin)
 
     def _has_changed(self, plugin):
@@ -29,7 +31,7 @@ class PluginMonitorThread(Thread):
     def _monitor_plugin(self, plugin):
         if self._has_changed(plugin):
             if plugin.get('reloaded', False):
-                self._burp.issueAlert('Reloading %s' % (plugin.get('class'),))
+                self.log.info('Reloading %s', plugin.get('class'))
             self._reload(plugin)
 
         return
@@ -38,8 +40,8 @@ class PluginMonitorThread(Thread):
         instance = plugin.get('instance')
 
         if instance() is None:
-            self._burp.issueAlert('Reference to object %s.%s no longer '
-                'exists' % (plugin.get('module'), plugin.get('class'),))
+            self.log.warn('Reference to object %s.%s no longer exists',
+                plugin.get('module'), plugin.get('class'))
             return
 
         m = __import__(plugin.get('module'), globals(), locals(),
@@ -75,7 +77,7 @@ class PluginMonitorThread(Thread):
             try:
                 for plugin in self._burp.monitoring:
                     self._monitor_plugin(plugin)
-            except Exception, e:
-                self._burp.issueAlert('Error reloading...: %s' % (e,))
+            except Exception:
+                self.log.exception('Error reloading...: %s', plugin)
 
             time.sleep(self.interval)

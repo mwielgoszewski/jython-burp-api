@@ -20,6 +20,6 @@ class ConsoleMenu(MenuItem):
         for message in messageInfo:
             requests.append(HttpRequest(message, _burp=self._burp))
 
-        self._burp.console.set('items', requests)
+        self.burp.console.set('items', requests)
 
         return

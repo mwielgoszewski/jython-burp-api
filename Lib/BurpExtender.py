@@ -148,6 +148,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         '''
         This method is invoked immediately before Burp Suite exits.
         '''
+        self.log.debug('Shutting down Burp')
         return
 
 

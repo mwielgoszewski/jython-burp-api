@@ -13,6 +13,10 @@ class MenuItem(IMenuItemHandler):
     CAPTION = ''
 
     def __init__(self, _burp):
-        self._burp = _burp
-        self._burp.registerMenuItem(self.CAPTION, self)
-        self._burp.issueAlert('Registered menu item: %r' % (self.CAPTION,))
+        self.burp = self._burp = _burp
+        self.log = self.burp.log
+        self.burp.registerMenuItem(self.CAPTION, self)
+        self.burp.issueAlert('Registered menu item: %r' % (self.CAPTION,))
+
+    def menuItemClicked(self, menuItemCaption, messageInfo):
+        raise NotImplementedError
