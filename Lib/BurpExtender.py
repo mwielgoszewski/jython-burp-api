@@ -22,7 +22,7 @@ import weakref
 
 from gds.burp import HttpRequest
 from gds.burp.config import Configuration, ConfigSection
-from gds.burp.core import ComponentManager
+from gds.burp.core import Component, ComponentManager
 from gds.burp.decorators import callback
 from gds.burp.dispatchers import NewScanIssueDispatcher, PluginDispatcher
 from gds.burp.menu import ConsoleMenu
@@ -36,6 +36,7 @@ logging.logProcesses = 0
 
 class BurpExtender(IBurpExtender, ComponentManager):
 
+    _components = ConfigSection('components', '')
     menus = ConfigSection('menus', '')
 
     def __init__(self):
@@ -168,6 +169,10 @@ class BurpExtender(IBurpExtender, ComponentManager):
             if self.menus.getbool(module) is True:
                 for MenuItemHandler in _get_menus(module):
                     MenuItemHandler(self)
+
+        for component, _ in self._components.options():
+            if self._components.getbool(component) is True:
+                _get_plugins(component)
 
         if not self.opt.disable_reloading:
             self.monitor = PluginMonitorThread(self)
@@ -475,8 +480,8 @@ class ConsoleThread(Thread):
                 pass
 
 
-def _get_menus(module):
-    module = module.split('.')
+def _get_menus(menu_module):
+    module = menu_module.split('.')
     klass = module.pop()
 
     try:
@@ -500,9 +505,29 @@ def _get_menus(module):
 
     try:
         return [getattr(m, klass)]
-    except ImportError:
-        logging.error('Could not import class %s.%s', '.'.join(module), klass)
+    except AttributeError:
+        logging.error('Could not import %s from module %s',
+    r                 klass, '.'.join(module))
+
         return []
+
+
+def _get_plugins(plugin_module):
+    module = plugin_module.split('.')
+    klass = module.pop()
+
+    if klass == '*':
+        to_import = module[-1]
+    else:
+        to_import = [klass]
+
+    try:
+        __import__('.'.join(module), globals(), locals(), to_import)
+    except ImportError:
+        logging.error('Could not import %s from module %s',
+                      ', '.join(to_import), '.'.join(module))
+
+    return
 
 
 def _sigbreak(signum, frame):

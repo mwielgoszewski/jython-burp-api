@@ -37,84 +37,84 @@ class NewScanIssueDispatcher(Component):
 class PluginDispatcher(Component):
 
     intruderRequest = OrderedExtensionsOption('plugins', 'intruder.request',
-         IIntruderRequestHandler, None, True,
+         IIntruderRequestHandler, None, False,
          '''List of components implmenting the `IIntruderRequestHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP requests directly before Burp Intruder
          sends it on the wire.''')
 
     intruderResponse = OrderedExtensionsOption('plugins', 'intruder.response',
-        IIntruderResponseHandler, None, True,
+        IIntruderResponseHandler, None, False,
          '''List of components implmenting the `IIntruderResponseHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP responses directly after Burp Intruder
          receives if off the wire.''')
 
     proxyRequest = OrderedExtensionsOption('plugins', 'proxy.request',
-         IProxyRequestHandler, None, True,
+         IProxyRequestHandler, None, False,
          '''List of components implmenting the `IProxyRequestHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP requests directly before Burp Proxy
          sends it on the wire.''')
 
     proxyResponse = OrderedExtensionsOption('plugins', 'proxy.response',
-        IProxyResponseHandler, None, True,
+        IProxyResponseHandler, None, False,
          '''List of components implmenting the `IProxyResponseHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP responses directly after Burp Proxy
          receives if off the wire.''')
 
     repeaterRequest = OrderedExtensionsOption('plugins', 'repeater.request',
-         IRepeaterRequestHandler, None, True,
+         IRepeaterRequestHandler, None, False,
          '''List of components implmenting the `IRepeaterRequestHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP requests directly before Burp Repeater
          sends it on the wire.''')
 
     repeaterResponse = OrderedExtensionsOption('plugins', 'repeater.response',
-        IRepeaterResponseHandler, None, True,
+        IRepeaterResponseHandler, None, False,
          '''List of components implmenting the `IRepeaterResponseHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP responses directly after Burp Repeater
          receives if off the wire.''')
 
     scannerRequest = OrderedExtensionsOption('plugins', 'scanner.request',
-         IScannerRequestHandler, None, True,
+         IScannerRequestHandler, None, False,
          '''List of components implmenting the `IScannerRequestHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP requests directly before Burp Scanner
          sends it on the wire.''')
 
     scannerResponse = OrderedExtensionsOption('plugins', 'scanner.response',
-        IScannerResponseHandler, None, True,
+        IScannerResponseHandler, None, False,
          '''List of components implmenting the `IScannerResponseHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP responses directly after Burp Scanner
          receives if off the wire.''')
 
     sequencerRequest = OrderedExtensionsOption('plugins', 'sequencer.request',
-         ISequencerRequestHandler, None, True,
+         ISequencerRequestHandler, None, False,
          '''List of components implmenting the `ISequencerRequestHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP requests directly before Burp Sequencer
          sends it on the wire.''')
 
     sequencerResponse = OrderedExtensionsOption('plugins', 'sequencer.response',
-        ISequencerResponseHandler, None, True,
+        ISequencerResponseHandler, None, False,
          '''List of components implmenting the `ISequencerResponseHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP responses directly after Burp Sequencer
          receives if off the wire.''')
 
     spiderRequest = OrderedExtensionsOption('plugins', 'spider.request',
-         ISpiderRequestHandler, None, True,
+         ISpiderRequestHandler, None, False,
          '''List of components implmenting the `ISpiderRequestHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP requests directly before Burp Spider
          sends it on the wire.''')
 
     spiderResponse = OrderedExtensionsOption('plugins', 'spider.response',
-        ISpiderResponseHandler, None, True,
+        ISpiderResponseHandler, None, False,
          '''List of components implmenting the `ISpiderResponseHandler`,
          in the order in which they will be applied. These components
          handle processing of HTTP responses directly after Burp Spider
