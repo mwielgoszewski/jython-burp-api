@@ -113,7 +113,7 @@ via Intruder and Scanner, and responses that come in Proxy and Intruder.
 
         def processResponse(self, request):
             self.log.info("This response from %s was received via Proxy and Intruder",
-                          request.url.geturl()
+                          request.url.geturl())
 
 To use this plugin, we need to first enable it under the `[components]` section
 within `burp.ini`, as well as add it to the list of options under `[handlers]`
