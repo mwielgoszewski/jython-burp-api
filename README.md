@@ -148,9 +148,9 @@ Installation / Running
 2. `git clone git://github.com/mwielgoszewski/jython-burp-api.git`
 3. `cd jython-burp-api/`
 4. Copy Burp Suite jar file(s) into current directory
-5. Compile BurpExtender files:
+5. Compile BurpExtender files (Note: On Windows the classpath separator is a semi-colon):
 
-    `$ javac -cp burpsuite_v1.4.01.jar:jython.jar java/src/*.java`
+    `$ javac -cp burpsuite_v1.4.01.jar:jython.jar java/src/*.java java/src/burp/*.java`
 
 6. Start Burp by adding jython, burp extender and burp onto CLASSPATH:
 
