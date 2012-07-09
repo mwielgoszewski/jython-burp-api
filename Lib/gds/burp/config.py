@@ -13,6 +13,7 @@
 # history and logs, available at http://trac.edgewall.org/log/.
 
 from ConfigParser import ConfigParser
+from copy import deepcopy
 from inspect import cleandoc
 import os.path
 
@@ -212,6 +213,40 @@ class Configuration(object):
             if parent.has_option(section, option, defaults=False):
                 return True
         return defaults and (section, option) in Option.registry
+
+    def parse_if_needed(self, force=False):
+        if not self.filename or not os.path.isfile(self.filename):
+            return False
+
+        changed = False
+        modtime = os.path.getmtime(self.filename)
+
+        if force or modtime > self._lastmtime:
+            self._sections = {}
+            self.parser._sections = {}
+            if not self.parser.read(self.filename):
+                raise IOError("Error reading '%(file)s', make sure it is "
+                              "readable." % (self.filename,))
+            self._lastmtime = modtime
+            self._old_sections = deepcopy(self.parser._sections)
+            changed = True
+
+        if changed:
+            self.parents = []
+            if self.parser.has_option('inherit', 'file'):
+                for filename in self.parser.get('inherit', 'file').split(','):
+                    filename = to_unicode(filename.strip())
+                    if not os.path.isabs(filename):
+                        filename = os.path.join(os.path.dirname(self.filename),
+                                                filename)
+                    self.parents.append(Configuration(filename))
+        else:
+            for parent in self.parents:
+                changed |= parent.parse_if_needed(force=force)
+
+        if changed:
+            self._cache = {}
+        return changed
 
 
 class Section(object):

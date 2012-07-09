@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-from java.io import File
-
 from threading import Thread
+import os.path
 import time
 import types
-import weakref
 
 
 class PluginMonitorThread(Thread):
@@ -20,9 +18,9 @@ class PluginMonitorThread(Thread):
             self._monitor_plugin(plugin)
 
     def _has_changed(self, plugin):
-        lastModified = File(plugin.get('filename')).lastModified()
+        lastModified = os.path.getmtime(plugin.get('filename'))
 
-        if plugin.get('modified', -1) < lastModified:
+        if lastModified > plugin.get('modified', -1):
             plugin['modified'] = lastModified
             return True
         else:
@@ -37,6 +35,9 @@ class PluginMonitorThread(Thread):
         return
 
     def _reload(self, plugin):
+        from burp import IMenuItemHandler
+        from gds.burp.config import Configuration
+
         instance = plugin.get('instance')
 
         if instance() is None:
@@ -44,17 +45,16 @@ class PluginMonitorThread(Thread):
                 plugin.get('module'), plugin.get('class'))
             return
 
-        m = __import__(plugin.get('module'), globals(), locals(),
-                       [plugin.get('class')])
-        reload(m)
+        if isinstance(instance(), IMenuItemHandler):
+            mod = __import__(plugin.get('module'), globals(), locals(),
+                           [plugin.get('class')])
+            reload(mod)
 
-        klass = getattr(m, plugin.get('class'))
-
-        if plugin.get('type') == 'IMenuItemHandler':
+            klass = getattr(mod, plugin.get('class'))
             self._patch_menu_item(instance(), klass)
-        else:
-            #TODO copy over old instance__dict__ to new instance
-            instance = weakref.ref(klass(self._burp))
+
+        elif isinstance(instance(), Configuration):
+            instance().parse_if_needed(force=True)
 
         plugin['reloaded'] = True
 

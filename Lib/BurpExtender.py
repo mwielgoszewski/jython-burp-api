@@ -49,6 +49,27 @@ class BurpExtender(IBurpExtender, ComponentManager):
         return '<BurpExtender at %#x>' % (id(self),)
 
 
+    def _monitor_item(self, obj):
+        _module = obj.__module__
+        _class = obj.__class__.__name__
+
+        # Monitor the actual configuration file rather than the
+        # module the Configuration class is defined in
+
+        if isinstance(obj, Configuration):
+            _filename = obj.filename
+
+        elif isinstance(obj, IMenuItemHandler):
+            _filename = inspect.getsourcefile(obj.__class__)
+
+        self.monitoring.append({
+            'class': _class,
+            'filename': _filename,
+            'instance': weakref.ref(obj),
+            'modified': os.path.getmtime(_filename),
+            'module': _module,
+            })
+
     def componentActivated(self, component):
         component.burp = self
         component.config = self.config
@@ -115,7 +136,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
                 format='%(asctime)-15s - %(levelname)s - %(message)s',
                 level=logging.INFO)
 
-        self.config = Configuration(opt.config)
+        self.config = Configuration(os.path.abspath(opt.config))
 
         if opt.interactive:
             from java.util import Properties
@@ -176,6 +197,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
                 _get_plugins(component)
 
         if not self.opt.disable_reloading:
+            self._monitor_item(self.config)
             self.monitor = PluginMonitorThread(self)
             self.monitor.start()
 
@@ -249,18 +271,9 @@ class BurpExtender(IBurpExtender, ComponentManager):
         user clicks on the menu item.
         '''
         # don't monitor objects initialized in the interpreter
-        if menuItemHandler.__module__ != '__main__':
-            _module = menuItemHandler.__module__
-            _filename = inspect.getsourcefile(menuItemHandler.__class__)
-            _class = menuItemHandler.__class__.__name__
 
-            self.monitoring.append({
-                'filename': _filename,
-                'class': _class,
-                'module': _module,
-                'type': 'IMenuItemHandler',
-                'instance': weakref.ref(menuItemHandler),
-                })
+        if menuItemHandler.__module__ != '__main__':
+            self._monitor_item(menuItemHandler)
 
         self._check_and_callback(
             self.registerMenuItem, menuItemCaption, menuItemHandler)
