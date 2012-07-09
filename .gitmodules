@@ -1,0 +1,3 @@
+[submodule "burp-extensions"]
+	path = Lib/gds/burpext
+	url = git://github.com/mwielgoszewski/jython-burp-extensions.git
