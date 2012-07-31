@@ -368,7 +368,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         begins with the specified prefix. If this parameter is null,
         the entire site map is returned.
         '''
-        for urlPrefix in urlPrefixes:
+        for urlPrefix in urlPrefixes or ('http',):
             for item in self._check_and_callback(self.getSiteMap, urlPrefix):
                 yield HttpRequest(item, _burp=self)
 
