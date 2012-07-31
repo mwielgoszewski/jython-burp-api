@@ -531,7 +531,7 @@ def _get_plugins(plugin_module):
     klass = module.pop()
 
     if klass == '*':
-        to_import = module[-1]
+        to_import = module[-1:]
     else:
         to_import = [klass]
 
