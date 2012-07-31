@@ -348,6 +348,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
                 for matcher in matchers:
                     if matcher.search(request.getUrl().toString()):
                         yield HttpRequest(request, _burp=self)
+                        break
         else:
             for request in self._check_and_callback(self.getProxyHistory):
                 yield HttpRequest(request, _burp=self)
