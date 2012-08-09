@@ -136,6 +136,11 @@ class PluginDispatcher(Component):
                                toolName, handler.__class__.__name__,
                                method, request)
 
-            getattr(handler, method)(request)
+            try:
+                getattr(handler, method)(request)
+            except Exception:
+                self.log.exception('Error calling handler via %s: %s.%s(%r)',
+                                   toolName, handler.__class__.__name__,
+                                   method, request)
 
         return
