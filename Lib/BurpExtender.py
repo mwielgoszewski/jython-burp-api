@@ -154,6 +154,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
             self.console = JLineConsole()
             self.console.exec('import __builtin__ as __builtins__')
+            self.console.exec('import site')
+            self.console.exec('del site')
             self.console.exec('from gds.burp import HttpRequest, HttpResponse')
             self.console.set('Burp', self)
 
