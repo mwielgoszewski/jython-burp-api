@@ -22,10 +22,9 @@ import weakref
 
 from gds.burp import HttpRequest
 from gds.burp.config import Configuration, ConfigSection
-from gds.burp.core import Component, ComponentManager
+from gds.burp.core import ComponentManager
 from gds.burp.decorators import callback
 from gds.burp.dispatchers import NewScanIssueDispatcher, PluginDispatcher
-from gds.burp.menu import ConsoleMenu
 from gds.burp.monitor import PluginMonitorThread
 
 
@@ -191,8 +190,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         for module, _ in self.menus.options():
             if self.menus.getbool(module) is True:
-                for MenuItemHandler in _get_menus(module):
-                    MenuItemHandler(self)
+                for menu in _get_menus(module):
+                    menu(self)
 
         for component, _ in self._components.options():
             if self._components.getbool(component) is True:
