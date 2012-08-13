@@ -70,10 +70,15 @@ class BurpExtender(IBurpExtender, ComponentManager):
             'module': _module,
             })
 
+        return
+
+
     def componentActivated(self, component):
         component.burp = self
         component.config = self.config
         component.log = self.log
+
+        return
 
 
     def setCommandLineArgs(self, args):
