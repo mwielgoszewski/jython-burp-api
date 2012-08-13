@@ -6,19 +6,20 @@ import types
 
 
 class PluginMonitorThread(Thread):
-    def __init__(self, _burp, interval=5):
+    def __init__(self, burp, interval=5):
         Thread.__init__(self, name='plugin-monitor')
-        self.burp = self._burp = _burp
+        self.burp = burp
         self.log = self.burp.log
         self.interval = interval
 
-        for plugin in self._burp.monitoring:
+        for plugin in self.burp.monitoring:
             self.burp.issueAlert('Monitoring %s' % (plugin.get('class'),))
             self.log.debug('Monitoring %s', plugin.get('class'))
-            self._monitor_plugin(plugin)
+            self.__monitor(plugin)
 
-    def _has_changed(self, plugin):
-        lastModified = os.path.getmtime(plugin.get('filename'))
+    def __has_changed(self, plugin):
+        srcfile = plugin.get('filename')
+        lastModified = os.path.getmtime(srcfile)
 
         if lastModified > plugin.get('modified', -1):
             plugin['modified'] = lastModified
@@ -26,15 +27,15 @@ class PluginMonitorThread(Thread):
         else:
             return False
 
-    def _monitor_plugin(self, plugin):
-        if self._has_changed(plugin):
+    def __monitor(self, plugin):
+        if self.__has_changed(plugin):
             if plugin.get('reloaded', False):
                 self.log.info('Reloading %s', plugin.get('class'))
-            self._reload(plugin)
+            self.__reload(plugin)
 
         return
 
-    def _reload(self, plugin):
+    def __reload(self, plugin):
         from burp import IMenuItemHandler
         from gds.burp.config import Configuration
 
@@ -75,8 +76,8 @@ class PluginMonitorThread(Thread):
     def run(self):
         while True:
             try:
-                for plugin in self._burp.monitoring:
-                    self._monitor_plugin(plugin)
+                for plugin in self.burp.monitoring:
+                    self.__monitor(plugin)
             except Exception:
                 self.log.exception('Error reloading...: %s', plugin)
 
