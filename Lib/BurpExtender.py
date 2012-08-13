@@ -23,7 +23,7 @@ import weakref
 
 from gds.burp import HttpRequest
 from gds.burp.config import Configuration, ConfigSection
-from gds.burp.core import ComponentManager
+from gds.burp.core import Component, ComponentManager
 from gds.burp.decorators import callback
 from gds.burp.dispatchers import NewScanIssueDispatcher, PluginDispatcher
 from gds.burp.monitor import PluginMonitorThread
@@ -37,12 +37,12 @@ logging.logProcesses = 0
 class BurpExtender(IBurpExtender, ComponentManager):
 
     _components = ConfigSection('components', '')
-    menus = ConfigSection('menus', '')
+    _menus = ConfigSection('menus', '')
 
     def __init__(self):
         ComponentManager.__init__(self)
         self.log = logging.getLogger(self.__class__.__name__)
-        self.monitoring = []
+        self.monitoring = {}
 
 
     def __repr__(self):
@@ -50,30 +50,39 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
 
     def _monitor_item(self, obj):
-        _module = obj.__module__
-        _class = obj.__class__.__name__
+        # don't monitor objects initialized in the interpreter
+
+        if obj.__module__ == '__main__':
+            return
+
+        mod = obj.__module__
+        cls = obj.__class__.__name__
 
         # Monitor the actual configuration file rather than the
         # module the Configuration class is defined in
 
         if isinstance(obj, Configuration):
-            _filename = obj.filename
+            filename = obj.filename
 
-        elif isinstance(obj, IMenuItemHandler):
-            _filename = inspect.getsourcefile(obj.__class__)
+        elif isinstance(obj, (Component, IMenuItemHandler)):
+            filename = inspect.getsourcefile(obj.__class__)
 
-        self.monitoring.append({
-            'class': _class,
-            'filename': _filename,
+        elif isinstance(obj, type):
+            filename = inspect.getsourcefile(obj)
+
+        monitoring = self.monitoring.setdefault(filename, [])
+
+        monitoring.append({
+            'class': cls,
             'instance': weakref.ref(obj),
-            'modified': os.path.getmtime(_filename),
-            'module': _module,
+            'module': mod,
             })
 
         return
 
 
     def componentActivated(self, component):
+        self.log.debug('Activating component: %r', component)
         component.burp = self
         component.config = self.config
         component.log = self.log
@@ -192,8 +201,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
                 self.issueAlert('Could not restore state from %s:'
                                 'file does not exist' % (self.opt.file,))
 
-        for module, _ in self.menus.options():
-            if self.menus.getbool(module) is True:
+        for module, _ in self._menus.options():
+            if self._menus.getbool(module) is True:
                 for menu in _get_menus(module):
                     menu(self)
 
@@ -275,10 +284,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         :param menuItemHandler: The handler to be invoked when the
         user clicks on the menu item.
         '''
-        # don't monitor objects initialized in the interpreter
-
-        if menuItemHandler.__module__ != '__main__':
-            self._monitor_item(menuItemHandler)
+        self._monitor_item(menuItemHandler)
 
         self._check_and_callback(
             self.registerMenuItem, menuItemCaption, menuItemHandler)
