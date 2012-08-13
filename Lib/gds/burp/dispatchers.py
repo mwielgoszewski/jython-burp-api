@@ -128,7 +128,11 @@ class PluginDispatcher(Component):
         method = ''.join(['process',
                           'Request' if messageIsRequest else 'Response'])
 
-        request = HttpRequest(messageInfo, _burp=self.burp)
+        try:
+            request = HttpRequest(messageInfo, _burp=self.burp)
+        except Exception:
+            self.log.exception('Could not parse IHttpRequestResponse object')
+            return
 
         for handler in getattr(self, handlers):
             if self.log.isEnabledFor(logging.DEBUG):
