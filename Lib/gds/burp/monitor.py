@@ -60,23 +60,10 @@ class PluginMonitorThread(Thread):
             reload(module)
 
             klass = getattr(module, plugin.get('class'))
-            self._patch_menu_item(instance(), klass)
+            patch_menu_item(instance(), klass)
 
         elif isinstance(instance(), Configuration):
             instance().parse_if_needed(force=True)
-
-        return
-
-    def _patch_menu_item(self, instance, new_cls):
-        '''
-        Because Burp does not expose anyway to un-register an
-        IMenuItemHandler, we need to get hold of the current instance
-        and monkey patch the 'menuItemClicked' method with the newly
-        reloaded one.
-        '''
-        menuItemClicked = new_cls.menuItemClicked.im_func
-        setattr(instance, 'menuItemClicked',
-                MethodType(menuItemClicked, instance, instance.__class__))
 
         return
 
@@ -89,3 +76,22 @@ class PluginMonitorThread(Thread):
                 self.log.exception('Error reloading...: %s', filename)
 
             time.sleep(self.interval)
+
+
+def patch_menu_item(instance, new_cls):
+    '''
+    Because Burp does not expose anyway to un-register an
+    IMenuItemHandler, we need to get hold of the current instance
+    and monkey patch the *menuItemClicked* method with the newly
+    reloaded one.
+
+    :param instance: the menu instance to be patched.
+    :param new_cls: a subclass of :class:`gds.burp.menu.MenuItem`
+        whose :py:meth:`~gds.burp.menu.MenuItem.menuItemClicked`
+        method will be bound to instance.
+    '''
+    menuItemClicked = new_cls.menuItemClicked.im_func
+    setattr(instance, 'menuItemClicked',
+            MethodType(menuItemClicked, instance, instance.__class__))
+
+    return
