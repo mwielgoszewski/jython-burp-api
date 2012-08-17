@@ -7,12 +7,14 @@ This module contains the primary objects that make working with
 Burp's IHttpRequestResponse object's more... Pythonic.
 '''
 from Cookie import SimpleCookie
-from cgi import parse_header, parse_qs
+from cStringIO import StringIO
+from cgi import FieldStorage, parse_header, parse_qs
 from urlparse import urlparse
 
 from .decorators import reify
 from .structures import CaseInsensitiveDict
 
+import json
 
 CRLF = '\r\n'
 SP = chr(0x20)
@@ -504,6 +506,13 @@ def _parse_parameters(request):
 
     if _type == 'application/x-www-form-urlencoded':
         parameters['body'] = parse_qs(request.body, keep_blank_values=True)
+
+    elif _type.startswith('multipart/'):
+        parameters['body'] = FieldStorage(
+            fp = StringIO(request.body),
+            headers = request.headers,
+            environ = dict(REQUEST_METHOD = request.method),
+            keep_blank_values=True)
 
     elif _type in ('application/json', ):
         try:
