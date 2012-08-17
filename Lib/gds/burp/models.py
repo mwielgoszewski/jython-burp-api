@@ -502,31 +502,32 @@ def _parse_parameters(request):
     if request.url.query:
         parameters['query'] = parse_qs(request.url.query, keep_blank_values=True)
 
-    _type, _options = parse_header(request.headers.get('content-type', ''))
+    ctype, pdict = parse_header(request.headers.get('content-type', ''))
 
-    if _type == 'application/x-www-form-urlencoded':
+    if ctype == 'application/x-www-form-urlencoded':
         parameters['body'] = parse_qs(request.body, keep_blank_values=True)
 
-    elif _type.startswith('multipart/'):
+    elif ctype.startswith('multipart/'):
         parameters['body'] = FieldStorage(
             fp = StringIO(request.body),
             headers = request.headers,
-            environ = dict(REQUEST_METHOD = request.method),
+            environ = dict(REQUEST_METHOD = request.method,
+                           QUERY_STRING = request.url.query),
             keep_blank_values=True)
 
-    elif _type in ('application/json', ):
+    elif ctype in ('application/json', ):
         try:
             parameters['body'] = json.loads(request.body)
         except (NameError, TypeError):
             pass
 
-    elif _type == 'application/x-amf':
+    elif ctype == 'application/x-amf':
         pass
 
-    elif _type == 'text/x-gwt-rpc':
+    elif ctype == 'text/x-gwt-rpc':
         pass
 
-    elif _type == 'application/xml':
+    elif ctype == 'application/xml':
         pass
 
     else:
