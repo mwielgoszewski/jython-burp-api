@@ -34,7 +34,7 @@ class INewScanIssueHandler(Interface):
     Extension point interface for components to perform actions
     whenever Burp Scanner discovers a new, unique issue.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`newScanIssue` method.
     '''
 
@@ -53,7 +53,7 @@ class IIntruderRequestHandler(Interface):
     Extension point interface for components to perform actions on
     a request before Burp Intruder sends it on the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processRequest` method.
     '''
 
@@ -71,7 +71,7 @@ class IIntruderResponseHandler(Interface):
     Extension point interface for components to perform actions on
     a response after Burp Intruder receives it off the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processResponse` method.
     '''
 
@@ -89,7 +89,7 @@ class IProxyRequestHandler(Interface):
     Extension point interface for components to perform actions on
     a request before Burp Proxy sends it on the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processRequest` method.
     '''
 
@@ -107,7 +107,7 @@ class IProxyResponseHandler(Interface):
     Extension point interface for components to perform actions on
     a response after Burp Proxy receives it off the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processResponse` method.
     '''
 
@@ -125,7 +125,7 @@ class IRepeaterRequestHandler(Interface):
     Extension point interface for components to perform actions on
     a request before Burp Repeater sends it on the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processRequest` method.
     '''
 
@@ -143,7 +143,7 @@ class IRepeaterResponseHandler(Interface):
     Extension point interface for components to perform actions on
     a response after Burp Repeater receives it off the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processResponse` method.
     '''
 
@@ -161,7 +161,7 @@ class IScannerRequestHandler(Interface):
     Extension point interface for components to perform actions on
     a request before Burp Scanner sends it on the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processRequest` method.
     '''
 
@@ -179,7 +179,7 @@ class IScannerResponseHandler(Interface):
     Extension point interface for components to perform actions on
     a response after Burp Scanner receives it off the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processResponse` method.
     '''
 
@@ -197,7 +197,7 @@ class ISequencerRequestHandler(Interface):
     Extension point interface for components to perform actions on
     a request before Burp Sequencer sends it on the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processRequest` method.
     '''
 
@@ -215,7 +215,7 @@ class ISequencerResponseHandler(Interface):
     Extension point interface for components to perform actions on
     a response after Burp Sequencer receives it off the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processResponse` method.
     '''
 
@@ -233,7 +233,7 @@ class ISpiderRequestHandler(Interface):
     Extension point interface for components to perform actions on
     a request before Burp Spider sends it on the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processRequest` method.
     '''
 
@@ -251,7 +251,7 @@ class ISpiderResponseHandler(Interface):
     Extension point interface for components to perform actions on
     a response after Burp Spider receives it off the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processResponse` method.
     '''
 
@@ -269,7 +269,7 @@ class ITargetRequestHandler(Interface):
     Extension point interface for components to perform actions on
     a request before Burp Target sends it on the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processRequest` method.
     '''
 
@@ -287,7 +287,7 @@ class ITargetResponseHandler(Interface):
     Extension point interface for components to perform actions on
     a response after Burp Target receives it off the wire.
 
-    Classes that that implement this interface must implement the
+    Classes that implement this interface must implement the
     :meth:`processResponse` method.
     '''
 
