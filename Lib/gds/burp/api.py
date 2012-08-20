@@ -262,3 +262,39 @@ class ISpiderResponseHandler(Interface):
 
         :param request: An :class:`HttpRequest <HttpRequest>` object.
         '''
+
+
+class ITargetRequestHandler(Interface):
+    '''
+    Extension point interface for components to perform actions on
+    a request before Burp Target sends it on the wire.
+
+    Classes that that implement this interface must implement the
+    :meth:`processRequest` method.
+    '''
+
+    def processRequest(request):
+        '''
+        This method is invoked before Burp Target sends a request
+        on the wire.
+
+        :param request: An :class:`HttpRequest <HttpRequest>` object.
+        '''
+
+
+class ITargetResponseHandler(Interface):
+    '''
+    Extension point interface for components to perform actions on
+    a response after Burp Target receives it off the wire.
+
+    Classes that that implement this interface must implement the
+    :meth:`processResponse` method.
+    '''
+
+    def processResponse(request):
+        '''
+        This method is invoked after Burp Target receives a response
+        off the wire.
+
+        :param request: An :class:`HttpRequest <HttpRequest>` object.
+        '''

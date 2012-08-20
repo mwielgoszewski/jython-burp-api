@@ -10,7 +10,8 @@ from .api import INewScanIssueHandler, \
     IRepeaterRequestHandler, IRepeaterResponseHandler, \
     IScannerRequestHandler, IScannerResponseHandler, \
     ISequencerRequestHandler, ISequencerResponseHandler, \
-    ISpiderRequestHandler, ISpiderResponseHandler
+    ISpiderRequestHandler, ISpiderResponseHandler, \
+    ITargetRequestHandler, ITargetResponseHandler
 
 from .config import OrderedExtensionsOption
 from .core import Component, ExtensionPoint
@@ -120,6 +121,19 @@ class PluginDispatcher(Component):
          handle processing of HTTP responses directly after Burp Spider
          receives if off the wire.''')
 
+    targetRequest = OrderedExtensionsOption('handlers', 'target.request',
+         ITargetRequestHandler, None, False,
+         '''List of components implementing the `ITargetRequestHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP requests directly before Burp Target
+         sends it on the wire.''')
+
+    targetResponse = OrderedExtensionsOption('handlers', 'target.response',
+        ITargetResponseHandler, None, False,
+         '''List of components implementing the `ITargetResponseHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP responses directly after Burp Target
+         receives if off the wire.''')
 
     def processHttpMessage(self, toolName, messageIsRequest, messageInfo):
         handlers = ''.join([toolName.lower(),
