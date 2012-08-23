@@ -26,6 +26,8 @@ __all__ = [
     'ISequencerResponseHandler',
     'ISpiderRequestHandler',
     'ISpiderResponseHandler',
+    'ITargetRequestHandler',
+    'ITargetResponseHandler',
 ]
 
 
