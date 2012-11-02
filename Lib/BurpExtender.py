@@ -44,10 +44,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
         self.log = logging.getLogger(self.__class__.__name__)
         self.monitoring = {}
 
-
     def __repr__(self):
         return '<BurpExtender at %#x>' % (id(self),)
-
 
     def _monitor_item(self, obj):
         # don't monitor objects initialized in the interpreter
@@ -80,7 +78,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         return
 
-
     def componentActivated(self, component):
         self.log.debug('Activating component: %r', component)
         component.burp = self
@@ -88,7 +85,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
         component.log = self.log
 
         return
-
 
     def setCommandLineArgs(self, args):
         '''
@@ -178,14 +174,12 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         return
 
-
     def applicationClosing(self):
         '''
         This method is invoked immediately before Burp Suite exits.
         '''
         self.log.debug('Shutting down Burp')
         return
-
 
     def registerExtenderCallbacks(self, callbacks):
         '''
@@ -219,11 +213,9 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         return
 
-
     def _check_cb(self):
         if hasattr(self, '_callbacks'):
             return getattr(self, '_callbacks')
-
 
     def _check_and_callback(self, method, *args):
         cb = self._check_cb()
@@ -237,36 +229,29 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
     cb = property(_check_cb)
 
-
     @callback
     def makeHttpRequest(self, host, port, useHttps, request):
         return
-
 
     @callback
     def sendToRepeater(self, host, port, useHttps, request, tabCaption):
         return
 
-
     @callback
     def sendToIntruder(self, host, port, useHttps, request, *args):
         return
-
 
     @callback
     def sendToSpider(self, url):
         return
 
-
     @callback
     def doActiveScan(self, host, port, useHttps, request, *args):
         return
 
-
     @callback
     def doPassiveScan(self, host, port, useHttps, request, response):
         return
-
 
     @callback
     def getScanIssues(self, urlPrefix):
@@ -364,11 +349,9 @@ class BurpExtender(IBurpExtender, ComponentManager):
             for request in self._check_and_callback(self.getProxyHistory):
                 yield HttpRequest(request, _burp=self)
 
-
     @callback
     def addToSiteMap(self, item):
         return
-
 
     def getSiteMap(self, *urlPrefixes):
         '''
@@ -384,21 +367,17 @@ class BurpExtender(IBurpExtender, ComponentManager):
             for item in self._check_and_callback(self.getSiteMap, urlPrefix):
                 yield HttpRequest(item, _burp=self)
 
-
     @callback
     def excludeFromScope(self, url):
         return
-
 
     @callback
     def includeInScope(self, url):
         return
 
-
     @callback
     def isInScope(self, url):
         return
-
 
     @callback
     def issueAlert(self, message):
@@ -410,7 +389,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
         '''
         return
 
-
     def restoreState(self, filename):
         '''
         This method can be used to restore Burp's state from a
@@ -419,7 +397,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
         :param filename: The filename containing Burp's saved state.
         '''
         return self._check_and_callback(self.restoreState, File(filename))
-
 
     def saveState(self, filename):
         '''
@@ -430,7 +407,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
         :param filename: The filename to save Burp's state in.
         '''
         return self._check_and_callback(self.saveState, File(filename))
-
 
     @callback
     def loadConfig(self, config):
@@ -448,14 +424,12 @@ class BurpExtender(IBurpExtender, ComponentManager):
         '''
         return
 
-
     def saveConfig(self):
         '''
         This method causes Burp to return its current configuration
         as a dictionary of key/value pairs.
         '''
         return dict(self._check_and_callback(self.saveConfig))
-
 
     @callback
     def setProxyInterceptionEnabled(self, enabled):
@@ -467,7 +441,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
         '''
         return
 
-
     def getBurpVersion(self):
         '''
         This method retrieves information about the version of Burp
@@ -476,7 +449,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
         functionality and APIs supported by the current version.
         '''
         return list(self._check_and_callback(self.getBurpVersion))
-
 
     def exitSuite(self, promptUser=False):
         '''
@@ -523,8 +495,7 @@ def _get_menus(menu_module):
             if name == 'MenuItem':
                 continue
 
-            if inspect.isclass(obj) and \
-                IMenuItemHandler in inspect.getmro(obj):
+            if inspect.isclass(obj) and IMenuItemHandler in inspect.getmro(obj):
                 menus.append(obj)
 
         return menus

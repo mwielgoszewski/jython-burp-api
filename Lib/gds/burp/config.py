@@ -369,8 +369,8 @@ class Section(object):
         comma-separated option.
 
         A different separator can be specified using the `sep` parameter. If
-        the `keep_empty` parameter is set to `False`, empty elements are omitted
-        from the list.
+        the `keep_empty` parameter is set to `False`, empty elements are
+        omitted from the list.
 
         Valid default input is a string or a list. Returns a list.
         """
@@ -506,7 +506,7 @@ class Option(object):
             return value
 
     def __set__(self, instance, value):
-        raise AttributeError, 'can\'t set attribute'
+        raise AttributeError("can't set attribute")
 
     def __repr__(self):
         return '<%s [%s] "%s">' % (self.__class__.__name__, self.section,
@@ -547,8 +547,9 @@ class OrderedExtensionsOption(ListOption):
     """A comma separated, ordered, list of components implementing `interface`.
     Can be empty.
 
-    If `include_missing` is true (the default) all components implementing the
-    interface are returned, with those specified by the option ordered first."""
+    If `include_missing` is true (the default) all components implementing
+    the interface are returned, with those specified by the option ordered
+    first."""
 
     def __init__(self, section, name, interface, default=None,
                  include_missing=True, doc='', doc_domain='burpini'):

@@ -16,7 +16,7 @@
 # Author: Jonas Borgström <jonas@edgewall.com>
 #         Christopher Lenz <cmlenz@gmx.de>
 
-__all__ = ['Component', 'ExtensionPoint', 'implements', 'Interface',]
+__all__ = ['Component', 'ExtensionPoint', 'implements', 'Interface', ]
 
 
 class Interface(object):
@@ -128,7 +128,7 @@ class Component(object):
 
         # Some sanity checks
         assert locals_ is not frame.f_globals and '__module__' in locals_, \
-               'implements() can only be used in a class definition'
+           'implements() can only be used in a class definition'
 
         locals_.setdefault('_implements', []).extend(interfaces)
 
