@@ -5,15 +5,23 @@ gds.burp.structures
 
 Data structures used by HttpRequest and HttpResponse.
 
-From kennethreitz/requests (used with permission). Thanks Kenneth!
+Based on kennethreitz/requests (used with permission). Thanks Kenneth!
 '''
+from collections import OrderedDict
 
 
-class CaseInsensitiveDict(dict):
+class CaseInsensitiveDict(OrderedDict):
     """Case-insensitive Dictionary
 
     For example, ``headers['content-encoding']`` will return the
     value of a ``'Content-Encoding'`` response header."""
+
+    def __repr__(self):
+        return super(CaseInsensitiveDict, self).__repr__()
+
+    def __str__(self):
+        return '\r\n'.join(
+            ': '.join(key, val) for key, val in self.iteritems())
 
     @property
     def lower_keys(self):
@@ -26,11 +34,15 @@ class CaseInsensitiveDict(dict):
             self._lower_keys.clear()
 
     def __setitem__(self, key, value):
-        dict.__setitem__(self, key, value)
+        if key in self:
+            del self[key]
+
+        super(CaseInsensitiveDict, self).__setitem__(key, value)
         self._clear_lower_keys()
 
     def __delitem__(self, key):
-        dict.__delitem__(self, self.lower_keys.get(key.lower(), key))
+        super(CaseInsensitiveDict, self).__delitem__(
+            self.lower_keys.get(key.lower(), key))
         self._lower_keys.clear()
 
     def __contains__(self, key):
@@ -39,13 +51,13 @@ class CaseInsensitiveDict(dict):
     def __getitem__(self, key):
         # We allow fall-through here, so values default to None
         if key in self:
-            return dict.__getitem__(self, self.lower_keys[key.lower()])
+            return super(CaseInsensitiveDict, self).__getitem__(
+                self.lower_keys[key.lower()])
 
     def get(self, key, default=None):
         if key in self:
             return self[key]
-        else:
-            return default
+        return default
 
 class LookupDict(dict):
     """Dictionary lookup object."""
