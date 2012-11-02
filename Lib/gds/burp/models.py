@@ -58,6 +58,11 @@ class HttpRequest(object):
         return item in self.body if self.body else False
 
 
+    def __getstate__(self):
+        return {k: v if k not in ('_burp', '_messageInfo') else None
+                for k, v in self.__dict__.iteritems()}
+
+
     def __len__(self):
         return int(self.headers.get('content-length', len(self.body or '')))
 
