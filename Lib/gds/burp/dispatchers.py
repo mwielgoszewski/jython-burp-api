@@ -145,7 +145,7 @@ class PluginDispatcher(Component):
         try:
             request = HttpRequest(messageInfo, _burp=self.burp)
         except Exception:
-            self.log.exception('Could not parse IHttpRequestResponse object')
+            self.log.exception('Could not parse object: %r', messageInfo)
             return
 
         for handler in getattr(self, handlers):
