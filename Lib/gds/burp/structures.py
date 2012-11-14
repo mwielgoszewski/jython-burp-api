@@ -21,7 +21,7 @@ class CaseInsensitiveDict(OrderedDict):
 
     def __str__(self):
         return '\r\n'.join(
-            ': '.join(key, val) for key, val in self.iteritems())
+            ': '.join((key, value)) for key, value in self.iteritems())
 
     @property
     def lower_keys(self):
