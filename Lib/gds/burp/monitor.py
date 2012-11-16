@@ -45,6 +45,7 @@ class PluginMonitorThread(Thread):
     def __reload(self, plugin):
         from burp import IMenuItemHandler
         from gds.burp.config import Configuration
+        from gds.burp.core import Component
 
         instance = plugin.get('instance')
 
@@ -59,11 +60,17 @@ class PluginMonitorThread(Thread):
 
             reload(module)
 
-            klass = getattr(module, plugin.get('class'))
-            patch_menu_item(instance(), klass)
+            cls = getattr(module, plugin.get('class'))
+
+            self.log.debug('Patching menuItemClicked on %r', cls)
+            patch_menu_item(instance(), cls)
 
         elif isinstance(instance(), Configuration):
+            self.log.debug('Reloading configuration %r', instance())
             instance().parse_if_needed(force=True)
+
+        elif isinstance(instance(), Component):
+            pass
 
         return
 
