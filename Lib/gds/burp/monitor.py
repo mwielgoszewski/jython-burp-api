@@ -20,7 +20,7 @@ class PluginMonitorThread(Thread):
             self.mtimes[filename] = os.path.getmtime(filename)
 
             for plugin in self.burp.monitoring.get(filename, []):
-                self.burp.issueAlert('Monitoring %s' % (plugin.get('class'),))
+                self.burp.issueAlert('Monitoring %s' % (plugin.get('class'), ))
 
     def __has_changed(self, filename):
         lastModified = os.path.getmtime(filename)

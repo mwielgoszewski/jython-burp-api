@@ -45,7 +45,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         self.monitoring = {}
 
     def __repr__(self):
-        return '<BurpExtender at %#x>' % (id(self),)
+        return '<BurpExtender at %#x>' % (id(self), )
 
     def _monitor_item(self, obj):
         # don't monitor objects initialized in the interpreter
@@ -190,10 +190,10 @@ class BurpExtender(IBurpExtender, ComponentManager):
         if self.opt.file:
             if os.path.isfile(self.opt.file):
                 self.restoreState(self.opt.file)
-                self.issueAlert('Restored state from %s' % (self.opt.file,))
+                self.issueAlert('Restored state from %s' % (self.opt.file, ))
             else:
                 self.issueAlert('Could not restore state from %s:'
-                                'file does not exist' % (self.opt.file,))
+                                'file does not exist' % (self.opt.file, ))
 
         for module, _ in self._menus.options():
             if self._menus.getbool(module) is True:
@@ -222,7 +222,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         if not hasattr(cb, method.__name__):
             raise Exception("%s not available in your version of Burp" % (
-                            method.__name__,))
+                            method.__name__, ))
 
         return getattr(cb, method.__name__)(*args)
 
@@ -257,7 +257,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
     def getScanIssues(self, urlPrefix):
         return
 
-
     def registerMenuItem(self, menuItemCaption, menuItemHandler):
         '''
         This method can be used to register a new menu item which
@@ -276,7 +275,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         return
 
-
     def newScanIssue(self, issue):
         '''
         This method is invoked whenever Burp Scanner discovers a new,
@@ -290,7 +288,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
         :param issue: Details of the new scan issue.
         '''
         return NewScanIssueDispatcher(self).newScanIssue(issue)
-
 
     def processHttpMessage(self, toolName, messageIsRequest, messageInfo):
         '''
@@ -331,7 +328,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
         return PluginDispatcher(self).processHttpMessage(
             toolName, messageIsRequest, messageInfo)
 
-
     def getProxyHistory(self, *args):
         '''
         This method returns a generator of all items in the proxy history.
@@ -363,7 +359,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         begins with the specified prefix. If this parameter is null,
         the entire site map is returned.
         '''
-        for urlPrefix in urlPrefixes or ('http',):
+        for urlPrefix in urlPrefixes or ('http', ):
             for item in self._check_and_callback(self.getSiteMap, urlPrefix):
                 yield HttpRequest(item, _burp=self)
 

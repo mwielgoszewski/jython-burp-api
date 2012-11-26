@@ -57,23 +57,18 @@ class HttpRequest(object):
     def __contains__(self, item):
         return item in self.body if self.body else False
 
-
     def __getstate__(self):
         return {k: v if k not in ('_burp', '_messageInfo') else None
                 for k, v in self.__dict__.iteritems()}
 
-
     def __len__(self):
         return int(self.headers.get('content-length', len(self.body or '')))
-
 
     def __nonzero__(self):
         return self.raw is not None
 
-
     def __repr__(self):
-        return '<HttpRequest [%s]>' % (self.url.path,)
-
+        return '<HttpRequest [%s]>' % (self.url.path, )
 
     @property
     def host(self):
@@ -85,7 +80,6 @@ class HttpRequest(object):
             self._host = self._messageInfo.getHost()
 
         return self._host
-
 
     @host.setter
     def host(self, host):
@@ -105,7 +99,6 @@ class HttpRequest(object):
 
         return
 
-
     @property
     def port(self):
         '''
@@ -116,7 +109,6 @@ class HttpRequest(object):
             self._port = self._messageInfo.getPort()
 
         return self._port
-
 
     @port.setter
     def port(self, port):
@@ -135,7 +127,6 @@ class HttpRequest(object):
 
         return
 
-
     @property
     def protocol(self):
         '''
@@ -146,7 +137,6 @@ class HttpRequest(object):
             self._protocol = self._messageInfo.getProtocol()
 
         return self._protocol
-
 
     @protocol.setter
     def protocol(self, protocol):
@@ -165,7 +155,6 @@ class HttpRequest(object):
 
         return
 
-
     @reify
     def url(self):
         '''
@@ -180,7 +169,6 @@ class HttpRequest(object):
 
         return self._url
 
-
     @reify
     def cookies(self):
         '''
@@ -193,7 +181,6 @@ class HttpRequest(object):
         self._cookies = SimpleCookie(self.headers.get('cookie', ''))
         return self._cookies
 
-
     @reify
     def headers(self):
         '''
@@ -204,7 +191,6 @@ class HttpRequest(object):
         '''
         self._headers = CaseInsensitiveDict(self._headers)
         return self._headers
-
 
     @reify
     def parameters(self):
@@ -217,7 +203,6 @@ class HttpRequest(object):
         self._parameters = _parse_parameters(self)
         return self._parameters
 
-
     @property
     def content_type(self):
         '''
@@ -227,7 +212,6 @@ class HttpRequest(object):
         '''
         return self.headers.get('content-type', '')
 
-
     @property
     def is_secure(self):
         '''
@@ -236,7 +220,6 @@ class HttpRequest(object):
         Note: This is a **read-only** attribute.
         '''
         return True if self.protocol == 'https' else False
-
 
     @property
     def is_xhr(self):
@@ -248,7 +231,6 @@ class HttpRequest(object):
         '''
         return True if 'x-requested-with' in self.headers else False
 
-
     @property
     def raw(self):
         '''
@@ -258,7 +240,6 @@ class HttpRequest(object):
             return self._messageInfo.getRequest().tostring()
 
         return
-
 
     @raw.setter
     def raw(self, message):
@@ -273,7 +254,6 @@ class HttpRequest(object):
 
         return
 
-
     @property
     def comment(self):
         '''
@@ -283,7 +263,6 @@ class HttpRequest(object):
             return self._messageInfo.getComment()
 
         return
-
 
     @comment.setter
     def comment(self, comment):
@@ -297,7 +276,6 @@ class HttpRequest(object):
 
         return
 
-
     @property
     def highlight(self):
         '''
@@ -307,7 +285,6 @@ class HttpRequest(object):
             return self._messageInfo.getHighlight()
 
         return
-
 
     @highlight.setter
     def highlight(self, color):
@@ -343,18 +320,14 @@ class HttpResponse(object):
     def __contains__(self, item):
         return item in self.body if self.body else False
 
-
     def __len__(self):
         return int(self.headers.get('content-length', len(self.body or '')))
-
 
     def __nonzero__(self):
         return self.raw is not None
 
-
     def __repr__(self):
         return '<HttpResponse [%s]>' % (self.status_code, )
-
 
     @reify
     def cookies(self):
@@ -368,7 +341,6 @@ class HttpResponse(object):
         self._cookies = SimpleCookie(self.headers.get('set-cookie', ''))
         return self._cookies
 
-
     @reify
     def headers(self):
         '''
@@ -380,7 +352,6 @@ class HttpResponse(object):
         self._headers = CaseInsensitiveDict(self._headers)
         return self._headers
 
-
     @property
     def content_type(self):
         '''
@@ -389,7 +360,6 @@ class HttpResponse(object):
         Note: This is a **read-only** attribute.
         '''
         return self.headers.get('content-type', '')
-
 
     @property
     def raw(self):
@@ -400,7 +370,6 @@ class HttpResponse(object):
             return self.request._messageInfo.getResponse().tostring()
 
         return
-
 
     @raw.setter
     def raw(self, message):
@@ -444,7 +413,7 @@ def _parse_message(message):
 
             status = start_line[_pos:_idx]
             if not status.isdigit():
-                raise ValueError('status code %r is not a number' % (status,))
+                raise ValueError('status code %r is not a number' % (status, ))
 
             status = int(status)
 
@@ -456,13 +425,13 @@ def _parse_message(message):
             _ridx = start_line.rfind(SP)
             version = start_line[_ridx + 1:]
             if not version.startswith('HTTP/'):
-                raise ValueError('Invalid HTTP version: %r' % (version,))
+                raise ValueError('Invalid HTTP version: %r' % (version, ))
 
             # request-uri will be everything in-between.
             # some clients might not encode space into a plus or %20
             uri = start_line[_pos:_ridx]
             if not uri or uri.isspace():
-                raise ValueError('Invalid URI: %r' % (uri,))
+                raise ValueError('Invalid URI: %r' % (uri, ))
 
         pos = idx + 2
     else:
@@ -494,7 +463,7 @@ def _parse_message(message):
 
                 headers[name] = value
             else:
-                raise ValueError('Error parsing header: %r' % (header,))
+                raise ValueError('Error parsing header: %r' % (header, ))
 
             pos = idx + 2
         else:
@@ -516,7 +485,8 @@ def _parse_parameters(request):
     parameters = {}
 
     if request.url.query:
-        parameters['query'] = parse_qs(request.url.query, keep_blank_values=True)
+        parameters['query'] = parse_qs(request.url.query,
+                                       keep_blank_values=True)
 
     ctype, pdict = parse_header(request.headers.get('content-type', ''))
 

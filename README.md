@@ -53,7 +53,7 @@ Below is an example of how to use one in your code.
         CAPTION = 'my caption'
         
         def menuItemClicked(self, menuItemCaption, messageInfo):
-            print('clicked %s' % (menuItemCaption,))
+            print('clicked %s' % (menuItemCaption, ))
 
 
 To add your new menu (MyMenuItem) to Burp's context menu, specify it as an
@@ -74,7 +74,7 @@ since there is no actual file to watch for changes.
 	>>> class MyMenuItem(MenuItem):
 	...     CAPTION = 'my caption'
 	...     def menuItemClicked(self, menuItemCaption, messageInfo):
-	...         print('clicked %s' % (menuItemCaption,))
+	...         print('clicked %s' % (menuItemCaption, ))
 	... 
 	>>> MyMenuItem(Burp)
 

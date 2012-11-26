@@ -226,7 +226,7 @@ class Configuration(object):
             self.parser._sections = {}
             if not self.parser.read(self.filename):
                 raise IOError("Error reading '%(file)s', make sure it is "
-                              "readable." % (self.filename,))
+                              "readable." % (self.filename, ))
             self._lastmtime = modtime
             self._old_sections = deepcopy(self.parser._sections)
             changed = True
