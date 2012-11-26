@@ -239,6 +239,17 @@ class HttpRequest(object):
 
 
     @property
+    def is_xhr(self):
+        '''
+        True if the HTTP request originated on the client using
+        XMLHttpRequest.
+
+        Note: This is a **read-only** attribute.
+        '''
+        return True if 'x-requested-with' in self.headers else False
+
+
+    @property
     def raw(self):
         '''
         Returns the full request contents.
