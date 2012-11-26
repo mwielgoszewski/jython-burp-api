@@ -485,7 +485,7 @@ def _get_menus(menu_module):
     try:
         m = __import__('.'.join(module), globals(), locals(), module[-1])
     except ImportError:
-        logging.error('Could not import module %s', '.'.join(module))
+        logging.exception('Could not import module %s', '.'.join(module))
         return []
 
     if klass == '*':
@@ -503,8 +503,8 @@ def _get_menus(menu_module):
     try:
         return [getattr(m, klass)]
     except AttributeError:
-        logging.error('Could not import %s from module %s',
-                      klass, '.'.join(module))
+        logging.exception('Could not import %s from module %s',
+                          klass, '.'.join(module))
 
         return []
 
@@ -521,8 +521,8 @@ def _get_plugins(plugin_module):
     try:
         __import__('.'.join(module), globals(), locals(), to_import)
     except ImportError:
-        logging.error('Could not import %s from module %s',
-                      ', '.join(to_import), '.'.join(module))
+        logging.exception('Could not import %s from module %s',
+                          ', '.join(to_import), '.'.join(module))
 
     return
 
