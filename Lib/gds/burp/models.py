@@ -496,9 +496,9 @@ def _parse_parameters(request):
             fp=StringIO(request.body),
             headers=request.headers,
             environ={
-                     REQUEST_METHOD: request.method,
-                     QUERY_STRING: request.url.query,
-                    },
+                REQUEST_METHOD: request.method,
+                QUERY_STRING: request.url.query,
+                },
             keep_blank_values=True)
 
     elif ctype in ('application/json', ):
