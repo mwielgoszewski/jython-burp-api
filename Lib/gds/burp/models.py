@@ -53,7 +53,6 @@ class HttpRequest(object):
         else:
             self.response = HttpResponse(None, request=self)
 
-
     def __contains__(self, item):
         return item in self.body if self.body else False
 
@@ -316,7 +315,6 @@ class HttpResponse(object):
             self.version, self.status_code, self.reason, self._headers, self.body = \
                 _parse_message(message.tostring())
 
-
     def __contains__(self, item):
         return item in self.body if self.body else False
 
@@ -454,7 +452,7 @@ def _parse_message(message):
 
             if _idx != -1:
                 name = header[:_idx].strip()
-                value = header[_idx+1:].strip()
+                value = header[_idx + 1:].strip()
 
                 has_value = headers.get(name)
 
@@ -495,10 +493,12 @@ def _parse_parameters(request):
 
     elif ctype.startswith('multipart/'):
         parameters['body'] = FieldStorage(
-            fp = StringIO(request.body),
-            headers = request.headers,
-            environ = dict(REQUEST_METHOD = request.method,
-                           QUERY_STRING = request.url.query),
+            fp=StringIO(request.body),
+            headers=request.headers,
+            environ={
+                     REQUEST_METHOD: request.method,
+                     QUERY_STRING: request.url.query,
+                    },
             keep_blank_values=True)
 
     elif ctype in ('application/json', ):

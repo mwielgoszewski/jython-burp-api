@@ -226,7 +226,6 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
         return getattr(cb, method.__name__)(*args)
 
-
     cb = property(_check_cb)
 
     @callback
