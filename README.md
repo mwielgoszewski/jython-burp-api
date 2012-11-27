@@ -1,11 +1,9 @@
-jython-burp-api (burpy)
-=======================
+jython-burp-api
+===============
+Jython-Burp-API is an ISC Licensed library, written in Jython, Java and Python.
 
-Burpy is an ISC Licensed library, written in Jython, Java and Python.
-
-Burpy exposes a Jython interface to the popular Burp Suite web security 
-testing tool, as an alternative to [Buby](http://tduehr.github.com/buby/) 
-for those testers who prefer Python over Ruby.
+Jython-Burp-API exposes a Jython interface to the popular Burp Suite web
+security testing tool, as an alternative to [Buby](http://tduehr.github.com/buby/) for those testers who prefer Python over Ruby.
 
 Features
 --------
@@ -13,7 +11,6 @@ By default, we monitor a list of registered menu items for any changes.
 If a file has changed (i.e., its last modification time was updated), the
 API will automatically attempt to reload it. This is great for active
 development and debugging of Burp extensions.
-
 
 Examples
 --------
@@ -31,15 +28,15 @@ assign them to the `items` local variable like so:
 
     >>> items
     [<HttpRequest [/firefox/headlines.xml]>]
-    >>> items[0].headers
+    >>> request = items[0]
+    >>> request.headers
     {'Accept-Language': 'en-us,en;q=0.5', ...
-    >>> items[0].response
+    >>> request.response
     <HttpResponse [302]>
-    >>> len(items[0].response)
+    >>> len(request.response)
     256
 
 and many more!
-
 
 Adding a simple menu item
 -------------------------
@@ -55,7 +52,6 @@ Below is an example of how to use one in your code.
         def menuItemClicked(self, menuItemCaption, messageInfo):
             print('clicked %s' % (menuItemCaption, ))
 
-
 To add your new menu (MyMenuItem) to Burp's context menu, specify it as an
 option under `[menus]` section in `burp.ini` and set it to enabled. If you wish
 to disable the built-in ConsoleMenu item that's registered, simply set it to
@@ -64,7 +60,6 @@ disabled, like so:
     [menus]
     gds.burp.menu.console.ConsoleMenu = disabled
     myplugins.MyMenuItem = enabled
-
 
 Once Burp is loaded, the new menu item should be available in Burp. You can
 also register menu items at runtime by initializing them within the interactive
@@ -78,11 +73,9 @@ since there is no actual file to watch for changes.
 	... 
 	>>> MyMenuItem(Burp)
 
-
 Also, keep in mind that in order to load the menu, we need to import it,
 thus requiring it to be in our class path. If you keep your plugins under the
 `Lib/` directory, you should be good.
-
 
 Processing HTTP requests/responses
 ----------------------------------
@@ -141,10 +134,9 @@ Dependencies
 - [Burp Suite](http://portswigger.net/burp/download.html) (free or professional)
 - [Jython 2.7+](http://www.jython.org/)
 
-
 Installation / Running
 ----------------------
-1. Install [Jython 2.7+](http://www.jython.org/) - I prefer the standalone jar option
+1. Install [Jython 2.7+](http://www.jython.org/) as a standalone jar
 2. `git clone git://github.com/mwielgoszewski/jython-burp-api.git`
 3. `cd jython-burp-api/`
 4. Copy Burp Suite jar file(s) into current directory
@@ -152,17 +144,15 @@ Installation / Running
 
     `$ javac -cp burpsuite_v1.4.01.jar:jython.jar java/src/*.java java/src/burp/*.java`
 
-6. Start Burp by adding jython, burp extender and burp onto CLASSPATH:
+6. Start Burp by adding jython, burp extender and Burp onto the CLASSPATH:
 
     `$ java -cp java/src/:jython.jar:burpsuite_v1.4.01.jar burp.StartBurp -i`
-
 
 **Note:** If Jython is _outside_ the current directory (assuming you followed the instructions
 and you're in jython-burp-api/), you'll need to add Lib/ onto your Java classpath like 
 so (ht Jon Passki, thanks!):
 
     $ java -cp Lib:java/src:/path/to/jython.jar:burp.jar burp.StartBurp -i
-
 
 Contribute
 ----------
