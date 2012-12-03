@@ -5,6 +5,31 @@ Jython-Burp-API is an ISC Licensed library, written in Jython, Java and Python.
 Jython-Burp-API exposes a Jython interface to the popular Burp Suite web
 security testing tool, as an alternative to [Buby](http://tduehr.github.com/buby/) for those testers who prefer Python over Ruby.
 
+Dependencies
+------------
+- [Burp Suite](http://portswigger.net/burp/download.html) (free or professional)
+- [Jython 2.7+](http://www.jython.org/)
+
+Installation / Running
+----------------------
+1. Install [Jython 2.7+](http://www.jython.org/) as a standalone jar
+2. `git clone git://github.com/mwielgoszewski/jython-burp-api.git`
+3. `cd jython-burp-api/`
+4. Copy Burp Suite jar file(s) into current directory
+5. Compile BurpExtender files (Note: On Windows the classpath separator is a semi-colon):
+
+    `$ javac -cp burpsuite_free_v1.5.jar:jython.jar java/src/*.java java/src/burp/*.java`
+
+6. Start Burp by adding jython, burp extender and Burp onto the CLASSPATH:
+
+    `$ java -cp burpsuite_free_v1.5.jar:jython.jar:java/src burp.StartBurp -i`
+
+**Note:** If the Jython jarfile is _outside_ of the current directory (assuming
+you followed the instructions and you're in jython-burp-api/), you'll need to
+add Lib/ and the full path to jython.jar onto the Java classpath like so:
+
+    `$ java -cp burpsuite_free_v1.5.jar:/path/to/jython.jar:Lib:java/src burp.StartBurp -i`
+
 Features
 --------
 By default, we monitor a list of registered menu items for any changes.
@@ -128,31 +153,6 @@ filter chains, such as in Java web apps, this should be immediately clear.
 Note, a plugin that implements an interface but is not enabled under
 `[components]` and/or is not listed in its respective option in the `[handlers]`
 configuration configuration, will not get called.
-
-Dependencies
-------------
-- [Burp Suite](http://portswigger.net/burp/download.html) (free or professional)
-- [Jython 2.7+](http://www.jython.org/)
-
-Installation / Running
-----------------------
-1. Install [Jython 2.7+](http://www.jython.org/) as a standalone jar
-2. `git clone git://github.com/mwielgoszewski/jython-burp-api.git`
-3. `cd jython-burp-api/`
-4. Copy Burp Suite jar file(s) into current directory
-5. Compile BurpExtender files (Note: On Windows the classpath separator is a semi-colon):
-
-    `$ javac -cp burpsuite_v1.4.01.jar:jython.jar java/src/*.java java/src/burp/*.java`
-
-6. Start Burp by adding jython, burp extender and Burp onto the CLASSPATH:
-
-    `$ java -cp java/src/:jython.jar:burpsuite_v1.4.01.jar burp.StartBurp -i`
-
-**Note:** If Jython is _outside_ the current directory (assuming you followed the instructions
-and you're in jython-burp-api/), you'll need to add Lib/ onto your Java classpath like 
-so (ht Jon Passki, thanks!):
-
-    $ java -cp Lib:java/src:/path/to/jython.jar:burp.jar burp.StartBurp -i
 
 Contribute
 ----------
