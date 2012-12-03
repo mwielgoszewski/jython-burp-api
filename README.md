@@ -28,7 +28,7 @@ Installation / Running
 you followed the instructions and you're in jython-burp-api/), you'll need to
 add Lib/ and the full path to jython.jar onto the Java classpath like so:
 
-    `$ java -cp burpsuite_free_v1.5.jar:/path/to/jython.jar:Lib:java/src burp.StartBurp -i`
+    $ java -cp burpsuite_free_v1.5.jar:/path/to/jython.jar:Lib:java/src burp.StartBurp -i
 
 Features
 --------
