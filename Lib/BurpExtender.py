@@ -47,6 +47,10 @@ class BurpExtender(IBurpExtender, ComponentManager):
     def __repr__(self):
         return '<BurpExtender at %#x>' % (id(self), )
 
+    def __iter__(self):
+        for request in self.getProxyHistory():
+            yield request
+
     def _monitor_item(self, obj):
         # don't monitor objects initialized in the interpreter
 
