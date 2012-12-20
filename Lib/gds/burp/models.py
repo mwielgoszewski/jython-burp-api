@@ -67,7 +67,7 @@ class HttpRequest(object):
         return self.raw is not None
 
     def __repr__(self):
-        return '<HttpRequest [%s]>' % (self.url.path, )
+        return '<HttpRequest [%s]>' % (getattr(self.url, 'path', ''), )
 
     @property
     def host(self):
