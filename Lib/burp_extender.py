@@ -213,6 +213,11 @@ class BurpExtender(IBurpExtender, ComponentManager):
             self.monitor = PluginMonitorThread(self)
             self.monitor.start()
 
+        try:
+            self.setExtensionName('jython-burp-api')
+        except Exception:
+            pass
+
         self.issueAlert('Burp extender ready...')
 
         return
