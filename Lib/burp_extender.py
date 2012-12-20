@@ -348,6 +348,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
             for request in self._check_and_callback(self.getProxyHistory):
                 yield HttpRequest(request, _burp=self)
 
+    history = property(lambda burp: list(burp.getProxyHistory()))
+
     @callback
     def addToSiteMap(self, item):
         return
@@ -449,6 +451,8 @@ class BurpExtender(IBurpExtender, ComponentManager):
         '''
         return list(self._check_and_callback(self.getBurpVersion))
 
+    version = property(getBurpVersion)
+
     def exitSuite(self, promptUser=False):
         '''
         This method can be used to shut down Burp programmatically,
@@ -462,6 +466,126 @@ class BurpExtender(IBurpExtender, ComponentManager):
             return self._check_and_callback(self.exitSuite, True)
 
         return self._check_and_callback(self.exitSuite, False)
+
+    @callback
+    def addScanIssue(self, issue):
+        '''
+        This method is used to register a new Scanner issue.
+        
+        Note: Wherever possible, extensions should implement custom
+        Scanner checks using IScannerCheck and report issues via those
+        checks, so as to integrate with Burp's user-driven workflow,
+        and ensure proper consolidation of duplicate reported issues.
+        This method is only designed for tasks outside of the normal
+        testing workflow, such as importing results from other scanning
+        tools.
+
+        :param issue: An object created by the extension that implements
+        the IScanIssue interface.
+        '''
+        return
+
+    @callback
+    def addSuiteTab(self, tab):
+        return
+
+    @callback
+    def applyMarkers(self, request, requestMarkers=None, responseMarkers=None):
+        return
+
+    @callback
+    def createMessageEditor(self, controller, editable):
+        return
+
+    @callback
+    def createTextEditor(self):
+        return
+
+    @callback
+    def customizeUiComponent(self, component):
+        return
+
+    @callback
+    def getHelpers(self):
+        return
+
+    helpers = property(lambda burp: burp.getHelpers())
+
+    @callback
+    def getStderr(self):
+        return
+
+    stderr = property(lambda burp: burp.getStderr())
+
+    @callback
+    def getStdout(self):
+        return
+
+    stdout = property(lambda burp: burp.getStdout())
+
+    @callback
+    def getToolName(self, toolFlag):
+        return
+
+    @callback
+    def registerContextMenuFactory(self, factory):
+        return
+    
+    @callback
+    def registerExtensionStateListener(self, listener):
+        return
+
+    @callback
+    def registerHttpListener(self, listener):
+        return
+
+    @callback
+    def registerIntruderPayloadGeneratorFactory(self, factory):
+        return
+
+    @callback
+    def registerIntruderPayloadProcessor(self, processor):
+        return
+
+    @callback
+    def registerMessageEditorTabFactory(self, factory):
+        return
+
+    @callback
+    def registerProxyListener(self, listener):
+        return
+
+    @callback
+    def registerScannerCheck(self, check):
+        return
+
+    @callback
+    def registerScannerInsertionPointProvider(self, provider):
+        return
+
+    @callback
+    def registerScannerListener(self, listener):
+        return
+
+    @callback
+    def registerSessionHandlingAction(self, action):
+        return
+
+    @callback
+    def removeSuiteTab(self, tab):
+        return
+
+    @callback
+    def saveBuffersToTempFiles(self, request):
+        return
+
+    @callback
+    def saveToTempFile(self, buffer):
+        return
+
+    @callback
+    def setExtensionName(self, name):
+        return
 
 
 class ConsoleThread(Thread):
