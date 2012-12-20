@@ -2,7 +2,6 @@ import burp.IBurpExtender;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IScanIssue;
-import burp.StartBurp;
 
 /*
  * Copyright (c) 2012 Marcin Wielgoszewski.
@@ -23,7 +22,7 @@ import burp.StartBurp;
 
 /**
  * @author Marcin Wielgoszewski
- * @version 1.0
+ * @version 1.1
  *
  */
 public class BurpExtender
@@ -37,7 +36,7 @@ public class BurpExtender
         {
             BurpExtender.handler = (IBurpExtender) JythonFactory
                     .getJythonObject(IBurpExtender.class.getName(),
-                            "Lib/BurpExtender.py");
+                            "Lib/burp_extender.py");
         }
     }
 
@@ -99,14 +98,4 @@ public class BurpExtender
         handler.setCommandLineArgs(args);
     }
 
-    public static void main(String[] args)
-    {
-        IBurpExtender jyBurpExtender = (IBurpExtender) JythonFactory
-                .getJythonObject(IBurpExtender.class.getName(),
-                        "Lib/BurpExtender.py");
-
-        BurpExtender.setHandler(jyBurpExtender);
-
-        StartBurp.main(args);
-    }
 }
