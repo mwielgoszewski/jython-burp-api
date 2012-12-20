@@ -3,7 +3,8 @@ jython-burp-api
 Jython-Burp-API is an ISC Licensed library, written in Jython, Java and Python.
 
 Jython-Burp-API exposes a Jython interface to the popular Burp Suite web
-security testing tool, as an alternative to [Buby](http://tduehr.github.com/buby/) for those testers who prefer Python over Ruby.
+security testing tool, as an alternative to [Buby](http://tduehr.github.com/buby/)
+for those testers who prefer Python over Ruby.
 
 Dependencies
 ------------
@@ -48,14 +49,14 @@ assign them to the `items` local variable like so:
 
     >>> Burp
     <BurpExtender at 0x2>
-    >>> Burp.getProxyHistory()
-    [<HttpRequest [/]>, ...
+    >>> Burp.history
+    [<HttpRequest [/]>, ...]
 
     >>> items
     [<HttpRequest [/firefox/headlines.xml]>]
     >>> request = items[0]
     >>> request.headers
-    {'Accept-Language': 'en-us,en;q=0.5', ...
+    {'Accept-Language': 'en-us,en;q=0.5', ...}
     >>> request.response
     <HttpResponse [302]>
     >>> len(request.response)
@@ -69,7 +70,7 @@ Check out the [ConsoleMenu](https://github.com/mwielgoszewski/jython-burp-api/bl
 class for an example of how to add menu items to Burp's context menu.
 Below is an example of how to use one in your code.
 
-    from gds.burp.menu.base import MenuItem
+    from gds.burp.menu import MenuItem
     
     class MyMenuItem(MenuItem):
         CAPTION = 'my caption'
