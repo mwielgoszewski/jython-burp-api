@@ -4,138 +4,98 @@ package burp;
  * @(#)IHttpRequestResponse.java
  *
  * Copyright PortSwigger Ltd. All rights reserved.
- * 
- * This code may be used to extend the functionality of Burp Suite and Burp
- * Suite Professional, provided that this usage does not violate the 
- * license terms for those products. 
+ *
+ * This code may be used to extend the functionality of Burp Suite Free Edition
+ * and Burp Suite Professional, provided that this usage does not violate the
+ * license terms for those products.
  */
-
 /**
- * This interface is used to allow extensions to access details of HTTP messages
- * that are processed within Burp.
- * 
- * Note that the setter methods generally can only be used before the message 
- * has been forwarded to the application (e.g. using 
- * IBurpExtender.processHttpMessage()) and not in read-only contexts (e.g. using 
- * IBurpExtender.getProxyHistory()). Conversely, the getter methods relating to 
- * response details can only be used after the message has been forwarded to the
- * application.
+ * This interface is used to retrieve and update details about HTTP messages.
+ *
+ * <b>Note:</b> The setter methods generally can only be used before the message
+ * has been processed, and not in read-only contexts. The getter methods
+ * relating to response details can only be used after the request has been
+ * issued.
  */
-
 public interface IHttpRequestResponse
 {
     /**
-     * Returns the name of the application host.
-     * 
-     * @return The name of the application host.
+     * This method is used to retrieve the request message.
+     *
+     * @return The request message.
      */
-    String getHost();
-    
-    /**
-     * Returns the port number used by the application.
-     * 
-     * @return The port number used by the application.
-     */
-    int getPort();
-    
-    /**
-     * Returns the protocol used by the application.
-     * 
-     * @return The protocol used by the application.
-     */
-    String getProtocol();
-    
-    /**
-     * Sets the name of the application host to which the request should 
-     * be sent.
-     * 
-     * @param host The name of the application host to which the request should 
-     * be sent.
-     * @throws java.lang.Exception
-     */
-    void setHost(String host) throws Exception;
-    
-    /**
-     * Sets the port number to which the request should be sent.
-     * 
-     * @param port The port number to which the request should be sent.
-     * @throws java.lang.Exception
-     */
-    void setPort(int port) throws Exception;
-    
-    /**
-     * Sets the protocol which should be used by the request.
-     * 
-     * @param protocol The protocol which should be used by the request. Valid 
-     * values are "http" and "https".
-     * @throws java.lang.Exception
-     */
-    void setProtocol(String protocol) throws Exception;
-    
-    /**
-     * Returns the full request contents.
-     * 
-     * @return The full request contents.
-     * @throws java.lang.Exception
-     */
-    byte[] getRequest() throws Exception;
-    
-    /**
-     * Returns the URL within the request.
-     * 
-     * @return The URL within the request.
-     * @throws java.lang.Exception
-     */
-    java.net.URL getUrl() throws Exception;
-    
-    /**
-     * Sets the request contents which should be sent to the application.
-     * 
-     * @param message The request contents which should be sent to the 
-     * application.
-     * @throws java.lang.Exception
-     */
-    void setRequest(byte[] message) throws Exception; 
-    
-    /**
-     * Returns the full response contents.
-     * 
-     * @return The full response contents.
-     * @throws java.lang.Exception
-     */
-    byte[] getResponse() throws Exception; 
-    
-    /**
-     * Sets the response contents which should be processed by the 
-     * invoking Burp tool.
-     * 
-     * @param message The response contents which should be processed by the 
-     * invoking Burp tool.
-     * @throws java.lang.Exception
-     */
-    void setResponse(byte[] message) throws Exception;
-    
-    /**
-     * Returns the HTTP status code contained within the response.
-     * 
-     * @return The HTTP status code contained within the response.
-     * @throws java.lang.Exception
-     */
-    short getStatusCode() throws Exception;
+    byte[] getRequest();
 
     /**
-     * Returns the user-annotated comment for this item, if applicable.
+     * This method is used to update the request message.
+     *
+     * @param message The new request message.
+     */
+    void setRequest(byte[] message);
+
+    /**
+     * This method is used to retrieve the response message.
+     *
+     * @return The response message.
+     */
+    byte[] getResponse();
+
+    /**
+     * This method is used to update the response message.
+     *
+     * @param message The new response message.
+     */
+    void setResponse(byte[] message);
+
+    /**
+     * This method is used to retrieve the user-annotated comment for this item,
+     * if applicable.
      *
      * @return The user-annotated comment for this item, or null if none is set.
      */
-    String getComment() throws Exception;
+    String getComment();
 
     /**
-     * Sets the user-annotated comment for this item.
+     * This method is used to update the user-annotated comment for this item.
      *
-     * @param comment The comment to be associated with this item.
-     * @throws Exception
+     * @param comment The comment to be assigned to this item.
      */
-    void setComment(String comment) throws Exception;
+    void setComment(String comment);
 
+    /**
+     * This method is used to retrieve the user-annotated highlight for this
+     * item, if applicable.
+     *
+     * @return The user-annotated highlight for this item, or null if none is
+     * set.
+     */
+    String getHighlight();
+
+    /**
+     * This method is used to update the user-annotated highlight for this item.
+     *
+     * @param color The highlight color to be assigned to this item. Accepted
+     * values are: red, orange, yellow, green, cyan, blue, pink, magenta, gray,
+     * or a null String to clear any existing highlight.
+     */
+    void setHighlight(String color);
+
+    /**
+     * This method is used to retrieve the HTTP service for this request /
+     * response.
+     *
+     * @return An
+     * <code>IHttpService</code> object containing details of the HTTP service.
+     */
+    IHttpService getHttpService();
+
+    /**
+     * This method is used to update the HTTP service for this request /
+     * response.
+     *
+     * @param httpService An
+     * <code>IHttpService</code> object containing details of the new HTTP
+     * service.
+     */
+    void setHttpService(IHttpService httpService);
 }
