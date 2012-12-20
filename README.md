@@ -18,7 +18,7 @@ Installation / Running
 4. Copy Burp Suite jar file(s) into current directory
 5. Compile BurpExtender files (Note: On Windows the classpath separator is a semi-colon):
 
-    `$ javac -cp burpsuite_free_v1.5.jar:jython.jar java/src/*.java java/src/burp/*.java`
+    `$ javac -cp jython.jar java/src/*.java java/src/burp/*.java`
 
 6. Start Burp by adding jython, burp extender and Burp onto the CLASSPATH:
 
