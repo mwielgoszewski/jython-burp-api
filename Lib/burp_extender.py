@@ -7,7 +7,7 @@ BurpExtender is a proxied class that implements the burp.IBurpExtender
 interface. It is what makes Jython <-> Burp possible.
 '''
 from java.io import File
-from java.lang import System
+from java.lang import AbstractMethodError, System
 from org.python.util import JLineConsole, PythonInterpreter
 from burp import IBurpExtender, IMenuItemHandler
 
@@ -225,10 +225,14 @@ class BurpExtender(IBurpExtender, ComponentManager):
         cb = self._check_cb()
 
         if not hasattr(cb, method.__name__):
-            raise Exception("%s not available in your version of Burp" % (
+            raise Exception("%s() not available in your version of Burp" % (
                             method.__name__, ))
 
-        return getattr(cb, method.__name__)(*args)
+        try:
+            return getattr(cb, method.__name__)(*args)
+        except AbstractMethodError:
+            raise Exception("%s() not available in your version of Burp" % (
+                            method.__name__, ))
 
     cb = property(_check_cb)
 
