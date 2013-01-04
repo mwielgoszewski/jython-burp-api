@@ -21,15 +21,11 @@ Installation / Running
 
     `$ javac -cp jython.jar java/src/*.java java/src/burp/*.java`
 
-6. Start Burp by adding jython, burp extender and Burp onto the CLASSPATH:
+6. Start Burp by executing the following Jython script, specifying location of Burp
+as the command line argument *-B* (note, *-i* and *-d* are set to enable 
+interactive console and debug logging):,
 
-    `$ java -cp burpsuite_free_v1.5.jar:jython.jar:java/src burp.StartBurp -i`
-
-**Note:** If the Jython jarfile is _outside_ of the current directory (assuming
-you followed the instructions and you're in jython-burp-api/), you'll need to
-add Lib/ and the full path to jython.jar onto the Java classpath like so:
-
-    $ java -cp burpsuite_free_v1.5.jar:/path/to/jython.jar:Lib:java/src burp.StartBurp -i
+    `$ java -Xmx1g -jar jython.jar run.py -i -d -B burpsuite_pro_v1.5.03.jar`
 
 Features
 --------
@@ -44,8 +40,7 @@ To start an interactive console, simply pass the -i command line argument
 when starting Burp.  You can also click one or multiple items in Burp and
 assign them to the `items` local variable like so:
 
-    $ java -cp java/src/:jython.jar:burpsuite_pro_v1.07.jar burp.StartBurp -i
-    ... launching Jython/Burp interpeter ...
+    $ java -Xmx1g -jar jython.jar run.py -i -d -B burpsuite_pro_v1.5.03.jar
 
     >>> Burp
     <BurpExtender at 0x2>
