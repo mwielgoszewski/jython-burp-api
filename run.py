@@ -112,5 +112,6 @@ if __name__ == '__main__':
     if not opt.burp:
         print('Load Burp Error: Specify a path to your burp.jar with -B')
         parser.print_help()
+        sys.exit(1)
 
     start_burp(opt, *args)
