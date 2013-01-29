@@ -166,7 +166,7 @@ class HttpRequest(object):
         if self._messageInfo is not None:
             _url = self._messageInfo.getUrl()
             if _url:
-                self._url = urlparse(_url)
+                self._url = urlparse(_url.toString())
 
         return self._url
 
