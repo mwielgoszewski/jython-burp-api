@@ -164,7 +164,9 @@ class HttpRequest(object):
         :returns: :class:`~urlparse.ParseResult` object.
         '''
         if self._messageInfo is not None:
-            self._url = urlparse(self._messageInfo.getUrl().toString())
+            _url = self._messageInfo.getUrl()
+            if _url:
+                self._url = urlparse(_url)
 
         return self._url
 
