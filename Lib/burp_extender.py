@@ -13,6 +13,7 @@ from burp import IBurpExtender, IMenuItemHandler
 
 from threading import Thread
 import inspect
+import json
 import logging
 import os
 import re
@@ -27,6 +28,8 @@ from gds.burp.core import Component, ComponentManager
 from gds.burp.decorators import callback
 from gds.burp.dispatchers import NewScanIssueDispatcher, PluginDispatcher
 from gds.burp.monitor import PluginMonitorThread
+
+import gds.burp.settings as settings
 
 
 logging._srcfile = None
@@ -103,13 +106,52 @@ class BurpExtender(IBurpExtender, ComponentManager):
         '''
         self._callbacks = callbacks
 
-        if self.opt.file:
-            if os.path.isfile(self.opt.file):
-                self.restoreState(self.opt.file)
-                self.issueAlert('Restored state from %s' % (self.opt.file, ))
-            else:
-                self.issueAlert('Could not restore state from %s:'
-                                'file does not exist' % (self.opt.file, ))
+        try:
+            self.setExtensionName('jython-burp-api')
+        except Exception:
+            pass
+
+        try:
+            setting, log_filename = settings.LOG_FILENAME
+            log_filename = self.loadExtensionSetting(setting, log_filename)
+
+            setting, log_format = settings.LOG_FORMAT
+            log_format = self.loadExtensionSetting(setting, log_format)
+
+            setting, log_level = settings.LOG_LEVEL
+            log_level = self.loadExtensionSetting(setting, log_level)
+
+            self.log.setLevel(log_level)
+
+            self._handler = handler = logging.FileHandler(
+                    log_filename, encoding='utf-8',delay=True)
+
+            handler.setFormatter(logging.Formatter(fmt=log_format))
+
+            self.log.addHandler(handler)
+
+            streamHandler = logging.StreamHandler(stream=self.stdout)
+            streamHandler.setFormatter(logging.Formatter(fmt=log_format))
+            self.log.addHandler(streamHandler)
+
+        except Exception:
+            self.log.exception('Could not load extension logging settings')
+
+        try:
+            setting, config = settings.CONFIG_FILENAME
+            config = self.loadExtensionSetting(setting, config)
+            self.config = Configuration(os.path.abspath(config))
+        except Exception:
+            self.log.exception('Could not load extension setting %s', setting)
+
+        try:
+            from gds.burp.listeners import PluginListener, SaveConfigurationOnUnload
+            self.registerHttpListener(PluginListener(self))
+
+            stateListener = SaveConfigurationOnUnload(self)
+            self.registerExtensionStateListener(stateListener)
+        except Exception:
+            self.log.exception('Could not load extension listener')
 
         for module, _ in self._menus.options():
             if self._menus.getbool(module) is True:
@@ -120,18 +162,11 @@ class BurpExtender(IBurpExtender, ComponentManager):
             if self._components.getbool(component) is True:
                 _get_plugins(component)
 
-        if not self.opt.disable_reloading:
-            self._monitor_item(self.config)
-            self.monitor = PluginMonitorThread(self)
-            self.monitor.start()
-
-        try:
-            self.setExtensionName('jython-burp-api')
-        except Exception:
-            pass
+        self._monitor_item(self.config)
+        self.monitor = PluginMonitorThread(self)
+        self.monitor.start()
 
         self.issueAlert('Burp extender ready...')
-
         return
 
     def _check_cb(self):
@@ -506,6 +541,38 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
     @callback
     def setExtensionName(self, name):
+        return
+
+    def loadExtensionSetting(self, name, default=None):
+        if name.startswith('jython.'):
+            settings = self._check_and_callback(self.loadExtensionSetting,
+                    'settings')
+            if settings:
+                settings = json.loads(settings)
+                return settings.get(name, default)
+            return default
+
+        value = self._check_and_callback(self.loadExtensionSetting, name)
+        if not value and default is not None:
+            return default
+        return value
+
+    def saveExtensionSetting(self, name, value):
+        if name.startswith('jython.'):
+            settings = self._check_and_callback(self.loadExtensionSetting,
+                    'settings')
+
+            if settings:
+                settings = json.loads(settings)
+            else:
+                settings = {}
+
+            settings[name] = value
+            self._check_and_callback(self.saveExtensionSetting,
+                    'settings', json.dumps(settings))
+            return
+
+        self._check_and_callback(self.saveExtensionSetting, name, value)
         return
 
 
