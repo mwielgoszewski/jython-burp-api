@@ -5,12 +5,17 @@ gds.burp.listeners
 
 Listeners that implement new Burp Extender API's.
 '''
-from burp import IExtensionStateListener
-from burp import IHttpListener
+from burp import IExtensionStateListener, IHttpListener, IScannerListener
 
-from .dispatchers import PluginDispatcher
+from .dispatchers import NewScanIssueDispatcher, PluginDispatcher
 
 import gds.burp.settings as settings
+
+__all__ = [
+    'PluginListener',
+    'ScannerListener',
+    'SaveConfigurationOnUnload',
+    ]
 
 
 class SaveConfigurationOnUnload(IExtensionStateListener):
@@ -53,4 +58,11 @@ class PluginListener(IHttpListener):
 
         return PluginDispatcher(self.burp).processHttpMessage(
             toolName, messageIsRequest, messageInfo)
-        
+
+
+class ScannerListener(IScannerListener):
+    def __init__(self, burp):
+        self.burp = burp
+
+    def newScanIssue(self, issue):
+        return NewScanIssueDispatcher(self.burp).newScanIssue(issue)
