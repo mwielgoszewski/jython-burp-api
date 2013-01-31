@@ -112,44 +112,44 @@ class BurpExtender(IBurpExtender, ComponentManager):
             pass
 
         try:
-            setting, log_filename = settings.LOG_FILENAME
-            log_filename = self.loadExtensionSetting(setting, log_filename)
-
-            setting, log_format = settings.LOG_FORMAT
-            log_format = self.loadExtensionSetting(setting, log_format)
-
-            setting, log_level = settings.LOG_LEVEL
-            log_level = self.loadExtensionSetting(setting, log_level)
+            log_filename = self.loadExtensionSetting(*settings.LOG_FILENAME)
+            log_format = self.loadExtensionSetting(*settings.LOG_FORMAT)
+            log_level = self.loadExtensionSetting(*settings.LOG_LEVEL)
 
             self.log.setLevel(log_level)
 
-            self._handler = handler = logging.FileHandler(
-                    log_filename, encoding='utf-8',delay=True)
+            fileHandler = logging.FileHandler(
+                    log_filename, encoding='utf-8', delay=True)
 
-            handler.setFormatter(logging.Formatter(fmt=log_format))
+            streamHandler = logging.StreamHandler()
 
-            self.log.addHandler(handler)
+            formatter = logging.Formatter(fmt=log_format)
 
-            streamHandler = logging.StreamHandler(stream=self.stdout)
-            streamHandler.setFormatter(logging.Formatter(fmt=log_format))
+            fileHandler.setFormatter(formatter)
+            streamHandler.setFormatter(formatter)
+
+            self.log.addHandler(fileHandler)
             self.log.addHandler(streamHandler)
 
+            self._handler = fileHandler
         except Exception:
             self.log.exception('Could not load extension logging settings')
 
         try:
-            setting, config = settings.CONFIG_FILENAME
-            config = self.loadExtensionSetting(setting, config)
+            config = self.loadExtensionSetting(*settings.CONFIG_FILENAME)
             self.config = Configuration(os.path.abspath(config))
         except Exception:
             self.log.exception('Could not load extension setting %s', setting)
 
         try:
-            from gds.burp.listeners import PluginListener, SaveConfigurationOnUnload
-            self.registerHttpListener(PluginListener(self))
+            from gds.burp.listeners import PluginListener, \
+                    SaveConfigurationOnUnload, \
+                    ScannerListener
 
-            stateListener = SaveConfigurationOnUnload(self)
-            self.registerExtensionStateListener(stateListener)
+            self.registerExtensionStateListener(
+                    SaveConfigurationOnUnload(self))
+            self.registerHttpListener(PluginListener(self))
+            self.registerScannerListener(ScannerListener(self))
         except Exception:
             self.log.exception('Could not load extension listener')
 
