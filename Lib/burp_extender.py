@@ -139,7 +139,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
             config = self.loadExtensionSetting(*settings.CONFIG_FILENAME)
             self.config = Configuration(os.path.abspath(config))
         except Exception:
-            self.log.exception('Could not load extension setting %s', setting)
+            self.log.exception('Could not load extension config settings')
 
         try:
             from gds.burp.listeners import PluginListener, \
