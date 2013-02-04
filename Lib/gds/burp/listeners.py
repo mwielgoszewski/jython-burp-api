@@ -22,6 +22,7 @@ class SaveConfigurationOnUnload(IExtensionStateListener):
     def __init__(self, burp):
         self.burp = burp
         self.log = burp.log
+        self.burp.registerExtensionStateListener(self)
 
     def saveExtensionSetting(self, name, value):
         try:
@@ -52,6 +53,7 @@ class SaveConfigurationOnUnload(IExtensionStateListener):
 class PluginListener(IHttpListener):
     def __init__(self, burp):
         self.burp = burp
+        self.burp.registerHttpListener(self)
 
     def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
         toolName = self.burp.getToolName(toolFlag)
@@ -63,6 +65,7 @@ class PluginListener(IHttpListener):
 class ScannerListener(IScannerListener):
     def __init__(self, burp):
         self.burp = burp
+        self.burp.registerScannerListener(self)
 
     def newScanIssue(self, issue):
         return NewScanIssueDispatcher(self.burp).newScanIssue(issue)

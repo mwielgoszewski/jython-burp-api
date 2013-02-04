@@ -146,10 +146,9 @@ class BurpExtender(IBurpExtender, ComponentManager):
                     SaveConfigurationOnUnload, \
                     ScannerListener
 
-            self.registerExtensionStateListener(
-                    SaveConfigurationOnUnload(self))
-            self.registerHttpListener(PluginListener(self))
-            self.registerScannerListener(ScannerListener(self))
+            SaveConfigurationOnUnload(self)
+            PluginListener(self)
+            ScannerListener(self)
         except Exception:
             self.log.exception('Could not load extension listener')
 
