@@ -107,7 +107,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
         self._callbacks = callbacks
 
         try:
-            self.setExtensionName('jython-burp-api')
+            self.setExtensionName(self.getExtensionName())
         except Exception:
             pass
 
@@ -541,6 +541,9 @@ class BurpExtender(IBurpExtender, ComponentManager):
     @callback
     def setExtensionName(self, name):
         return
+
+    def getExtensionName(self):
+        return self.loadExtensionSetting(*settings.EXTENSION_NAME)
 
     def loadExtensionSetting(self, name, default=None):
         if name.startswith('jython.'):
