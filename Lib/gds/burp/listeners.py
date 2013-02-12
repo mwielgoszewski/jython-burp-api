@@ -11,6 +11,7 @@ from .dispatchers import NewScanIssueDispatcher, PluginDispatcher
 
 import gds.burp.settings as settings
 
+
 __all__ = [
     'PluginListener',
     'ScannerListener',
