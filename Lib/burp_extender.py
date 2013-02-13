@@ -152,6 +152,13 @@ class BurpExtender(IBurpExtender, ComponentManager):
         except Exception:
             self.log.exception('Could not load extension listener')
 
+        try:
+            from gds.burp.ui import ConsoleTab
+            self._console_tab = ConsoleTab(self)
+            self.console = self._console_tab.interpreter
+        except Exception as e:
+            self.log.exception('Could not load console tab')
+
         for module, _ in self._menus.options():
             if self._menus.getbool(module) is True:
                 for menu in _get_menus(module):
