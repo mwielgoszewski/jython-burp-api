@@ -9,6 +9,7 @@ from javax.swing import JScrollPane
 
 from burp import ITab
 
+from .console import Console
 import gds.burp.settings as settings
 
 
@@ -21,6 +22,9 @@ class ConsoleTab(ITab):
 
         self.caption = burp.loadExtensionSetting(*settings.CONSOLE_CAPTION)
         self.scrollpane = JScrollPane()
+
+        self.console = Console(burp)
+        self.scrollpane.setViewportView(self.console.textpane)
         
         self.burp.addSuiteTab(self)
         self.burp.customizeUiComponent(self.getUiComponent())
@@ -30,3 +34,7 @@ class ConsoleTab(ITab):
 
     def getTabCaption(self):
         return self.caption
+
+    @property
+    def interpreter(self):
+        return self.console.interp
