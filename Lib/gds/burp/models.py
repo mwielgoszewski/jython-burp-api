@@ -6,6 +6,9 @@ gds.burp.models
 This module contains the primary objects that make working with
 Burp's IHttpRequestResponse object's more... Pythonic.
 '''
+from java.net import URL
+from burp import IHttpService, IScanIssue
+
 from Cookie import SimpleCookie
 from cStringIO import StringIO
 from cgi import FieldStorage, parse_header, parse_qs
@@ -384,6 +387,102 @@ class HttpResponse(object):
             return self.request._messageInfo.setResponse(message)
 
         return
+
+
+class HttpService(IHttpService):
+    __slots__ = ['host', 'port', 'protocol', ]
+
+    def __init__(self, *args, **kwargs):
+        attrs = {}
+
+        if args and isinstance(args[0], IHttpService):
+            service = args[0]
+            attrs['host'] = service.getHost()
+            attrs['port'] = service.getPort()
+            attrs['protocol'] = service.getProtocol()
+
+        attrs.update(kwargs)
+
+        self.host = unicode(attrs.get('host', u'localhost'))
+        self.port = int(attrs.get('port', 80))
+        self.protocol = unicode(attrs.get('protocol', u'http'))
+
+    def __repr__(self):
+        return '<HttpService [%s://%s:%d]>' % (
+            self.getHost(), self.getPort(), self.getProtocol(), )
+
+    def getHost(self):
+        return unicode(self.host)
+
+    def getPort(self):
+        return int(self.port)
+
+    def getProtocol(self):
+        return unicode(self.protocol)
+
+
+class ScanIssue(IScanIssue):
+    __slots__ = ['confidence', 'httpMessages', 'httpService',
+        'issueBackground', 'issueDetail', 'issueName', 'issueType',
+        'remediationBackground', 'remediationDetail', 'severity', 'url', ]
+
+    def __init__(self, *args, **kwargs):
+        attrs = {}
+
+        if args and isinstance(args[0], IScanIssue):
+            issue = args[0]
+            attrs['confidence'] = issue.getConfidence()
+            attrs['httpMessages'] = list(issue.getHttpMessages())
+            attrs['httpService'] = HttpService(issue.getHttpService(), **kwargs)
+            attrs['issueBackground'] = issue.getIssueBackground()
+            attrs['issueDetail'] = issue.getIssueDetail()
+            attrs['issueName'] = issue.getIssueName()
+            attrs['issueType'] = issue.getIssueType()
+            attrs['remediationBackground'] = issue.getRemediationBackground()
+            attrs['remediationDetail'] = issue.getRemedationDetail()
+            attrs['severity'] = issue.getSeverity()
+            attrs['url'] = urlparse(str(issue.getUrl()))
+
+        attrs.update(kwargs)
+
+        for key, value in attrs.iteritems():
+            setattr(self, key, value)
+    
+    def __repr__(self):
+        return '<ScanIssue %s>' % (self.getIssueName(), )
+
+    def getConfidence(self):
+        return getattr(self, 'confidence', u'Tentative')
+
+    def getHttpMessages(self):
+        return getattr(self, 'httpMessages', None)
+
+    def getHttpService(self):
+        return getattr(self, 'httpService', HttpService())
+
+    def getIssueBackground(self):
+        return getattr(self, 'issueBackground', None)
+
+    def getIssueDetail(self):
+        return getattr(self, 'issueDetail', None)
+
+    def getIssueName(self):
+        return getattr(self, 'issueName', u'Default Issue Name')
+
+    def getIssueType(self):
+        return getattr(self, 'issueType', None)
+
+    def getRemediationBackground(self):
+        return getattr(self, 'remediationBackground', None)
+
+    def getRemediationDetail(self):
+        return getattr(self, 'remediationDetail', None)
+
+    def getSeverity(self):
+        return getattr(self, 'severity', u'Information')
+
+    def getUrl(self):
+        return URL(getattr(self, 'url', urlparse('http://')).geturl())
 
 
 def _parse_message(message):
