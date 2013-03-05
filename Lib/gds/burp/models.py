@@ -409,7 +409,7 @@ class HttpService(IHttpService):
 
     def __repr__(self):
         return '<HttpService [%s://%s:%d]>' % (
-            self.getHost(), self.getPort(), self.getProtocol(), )
+            self.getHost(), self.getProtocol(), self.getPort(), )
 
     def getHost(self):
         return unicode(self.host)
