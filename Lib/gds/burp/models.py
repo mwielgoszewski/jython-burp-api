@@ -439,7 +439,7 @@ class ScanIssue(IScanIssue):
             attrs['issueName'] = issue.getIssueName()
             attrs['issueType'] = issue.getIssueType()
             attrs['remediationBackground'] = issue.getRemediationBackground()
-            attrs['remediationDetail'] = issue.getRemedationDetail()
+            attrs['remediationDetail'] = issue.getRemediationDetail()
             attrs['severity'] = issue.getSeverity()
             attrs['url'] = urlparse(str(issue.getUrl()))
 
