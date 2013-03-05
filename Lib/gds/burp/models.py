@@ -424,7 +424,8 @@ class HttpService(IHttpService):
 class ScanIssue(IScanIssue):
     __slots__ = ['confidence', 'httpMessages', 'httpService',
         'issueBackground', 'issueDetail', 'issueName', 'issueType',
-        'remediationBackground', 'remediationDetail', 'severity', 'url', ]
+        'remediationBackground', 'remediationDetail', 'severity', 'url',
+        'host', 'port', 'protocol', ]
 
     def __init__(self, *args, **kwargs):
         attrs = {}
@@ -442,6 +443,9 @@ class ScanIssue(IScanIssue):
             attrs['remediationDetail'] = issue.getRemediationDetail()
             attrs['severity'] = issue.getSeverity()
             attrs['url'] = urlparse(str(issue.getUrl()))
+            attrs['host'] = attrs['httpService'].getHost()
+            attrs['port'] = attrs['httpService'].getPort()
+            attrs['protocol'] = attrs['httpService'].getProtocol()
 
         attrs.update(kwargs)
 
@@ -483,6 +487,15 @@ class ScanIssue(IScanIssue):
 
     def getUrl(self):
         return URL(getattr(self, 'url', urlparse('http://')).geturl())
+
+    def getHost(self):
+        return getattr(self, 'host', u'localhost')
+
+    def getPort(self):
+        return int(getattr(self, 'port', 80))
+
+    def getProtocol(self):
+        return getattr(self, 'protocol', u'http')
 
 
 def _parse_message(message):
