@@ -27,11 +27,10 @@ class Console(object):
         self._locals = {}
         self._buffer = []
         self.history = History(self)
-        
+
         if namespace is not None:
             self._locals.update(namespace)
-        
-        
+
         self.interp = JythonInterpreter(self, self._locals)
 
         self.textpane = JTextPane(keyTyped=self.keyTyped,
@@ -131,7 +130,17 @@ class Console(object):
             start, end = self.__getLastLineOffsets()
             self.textpane.caretPosition = end - 1
 
-    def pasteAction(self, event=None):pass
+    def pasteAction(self, event=None):
+        if self.inLastLine():
+            clipboard = Toolkit.getDefaultToolkit().getSystemClipboard()
+            clipboard.getContents(self.textpane)
+            contents = clipboard.getData(DataFlavor.stringFlavor)
+
+            lines = contents.splitlines()
+            for i, line in enumerate(lines):
+                self.insertText(line)
+                if i < len(lines) - 1:
+                    self.enterAction()
 
     def keyboardInterruptAction(self, event=None):
         self.interp.runsource('raise KeyboardInterrupt\n')
@@ -140,7 +149,7 @@ class Console(object):
 
     def backspaceListener(self, event=None):
         start, end = self.__getLastLineOffsets()
-        
+
         if self.textpane.getCaretPosition() <= start and \
             not self.textpane.getSelectedText():
                 event.consume()
@@ -169,13 +178,13 @@ class Console(object):
             (KeyEvent.VK_DOWN, 0, 'jython.down', self.history.historyDown),
 
             (KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), 'jython.paste', self.pasteAction),
-            
+
             (KeyEvent.VK_A, InputEvent.CTRL_MASK, 'jython.home', self.homeAction),
             (KeyEvent.VK_E, InputEvent.CTRL_MASK, 'jython.end', self.endAction),
             (KeyEvent.VK_K, InputEvent.CTRL_MASK, 'jython.deleteEndLine', self.deleteEndLineAction),
             (KeyEvent.VK_Y, InputEvent.CTRL_MASK, 'jython.paste', self.pasteAction),
 
-            (interrupt_key, InputEvent.CTRL_MASK, 'jython.keyboardInterrupt', self.keyboardInterruptAction),
+            #(interrupt_key, InputEvent.CTRL_MASK, 'jython.keyboardInterrupt', self.keyboardInterruptAction),
             ]
 
         keymap = JTextComponent.addKeymap('jython', self.textpane.getKeymap())
@@ -197,7 +206,7 @@ class Console(object):
 
         if include is True:
             return start <= position <= end
-        
+
         return start < position <= end
 
     def __getLastLineOffsets(self):
@@ -253,3 +262,4 @@ class JythonInterpreter(InteractiveInterpreter):
 
     def write(self, data, color=Color.black):
         self.console.write(data.rstrip('\r\n'), color=color)
+
