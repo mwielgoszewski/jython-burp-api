@@ -172,6 +172,9 @@ class BurpExtender(IBurpExtender, ComponentManager):
         self.monitor = PluginMonitorThread(self)
         self.monitor.start()
 
+        # because I'm tired of disabling Burp Proxy Interception at startup
+        self.setProxyInterceptionEnabled(False)
+
         self.issueAlert('Burp extender ready...')
         return
 
