@@ -14,6 +14,8 @@ from .core import Interface
 
 __all__ = [
     'INewScanIssueHandler',
+    'IExtenderRequestHandler',
+    'IExtenderResponseHandler',
     'IIntruderRequestHandler',
     'IIntruderResponseHandler',
     'IProxyRequestHandler',
@@ -47,6 +49,42 @@ class INewScanIssueHandler(Interface):
         or logging of issues.
 
         :param issue: An :class:`burp.IScanIssue <IScanIssue>` object.
+        '''
+
+
+class IExtenderRequestHandler(Interface):
+    '''
+    Extension point interface for components to perform actions on
+    a request before Burp Extender sends it on the wire.
+
+    Classes that implement this interface must implement the
+    :meth:`processRequest` method.
+    '''
+
+    def processRequest(request):
+        '''
+        This method is invoked before Burp Extender sends a request
+        on the wire.
+
+        :param request: An :class:`HttpRequest <HttpRequest>` object.
+        '''
+
+
+class IExtenderResponseHandler(Interface):
+    '''
+    Extension point interface for components to perform actions on
+    a response after Burp Extender receives it off the wire.
+
+    Classes that implement this interface must implement the
+    :meth:`processResponse` method.
+    '''
+
+    def processResponse(request):
+        '''
+        This method is invoked after Burp Extender receives a response
+        off the wire.
+
+        :param request: An :class:`HttpRequest <HttpRequest>` object.
         '''
 
 

@@ -5,6 +5,7 @@ gds.burp.dispatchers
 
 '''
 from .api import INewScanIssueHandler, \
+    IExtenderRequestHandler, IExtenderResponseHandler, \
     IIntruderRequestHandler, IIntruderResponseHandler, \
     IProxyRequestHandler, IProxyResponseHandler, \
     IRepeaterRequestHandler, IRepeaterResponseHandler, \
@@ -36,6 +37,20 @@ class NewScanIssueDispatcher(Component):
 
 
 class PluginDispatcher(Component):
+
+    extenderRequest = OrderedExtensionsOption('handlers', 'extender.request',
+         IExtenderRequestHandler, None, False,
+         '''List of components implementing the `IExtenderRequestHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP requests directly before Burp Extender
+         sends it on the wire.''')
+
+    extenderResponse = OrderedExtensionsOption('handlers', 'extender.response',
+        IExtenderResponseHandler, None, False,
+         '''List of components implementing the `IExtenderResponseHandler`,
+         in the order in which they will be applied. These components
+         handle processing of HTTP responses directly after Burp Extender
+         receives if off the wire.''')
 
     intruderRequest = OrderedExtensionsOption('handlers', 'intruder.request',
          IIntruderRequestHandler, None, False,
