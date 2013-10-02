@@ -7,7 +7,11 @@ This module contains the primary objects that make working with
 Burp's IHttpRequestResponse object's more... Pythonic.
 '''
 from java.net import URL
-from burp import IHttpService, IScanIssue
+try:
+    from burp import IHttpService, IScanIssue
+except ImportError:
+    class IHttpService(object):pass
+    class IScanIssue(object):pass
 
 from Cookie import SimpleCookie
 from cStringIO import StringIO
