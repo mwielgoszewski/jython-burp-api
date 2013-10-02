@@ -7,7 +7,9 @@ BurpExtender is a proxied class that implements the burp.IBurpExtender
 interface. It is what makes Jython <-> Burp possible.
 '''
 from java.io import File
-from java.lang import AbstractMethodError, System
+from java.lang import AbstractMethodError
+from java.net import URL
+
 from org.python.util import JLineConsole, PythonInterpreter
 from burp import IBurpExtender, IMenuItemHandler
 
@@ -214,8 +216,11 @@ class BurpExtender(IBurpExtender, ComponentManager):
     def sendToIntruder(self, host, port, useHttps, request, *args):
         return
 
-    @callback
     def sendToSpider(self, url):
+        if not self.isInScope(url):
+            self.includeInScope(url)
+
+        self._check_and_callback(self.sendToSpider, URL(str(url)))
         return
 
     @callback
@@ -338,17 +343,16 @@ class BurpExtender(IBurpExtender, ComponentManager):
             for item in self._check_and_callback(self.getSiteMap, urlPrefix):
                 yield HttpRequest(item, _burp=self)
 
-    @callback
     def excludeFromScope(self, url):
+        self._check_and_callback(self.excludeFromScope, URL(str(url)))
         return
 
-    @callback
     def includeInScope(self, url):
+        self._check_and_callback(self.includeInScope, URL(str(url)))
         return
 
-    @callback
     def isInScope(self, url):
-        return
+        return self._check_and_callback(self.isInScope, URL(str(url)))
 
     @callback
     def issueAlert(self, message):
