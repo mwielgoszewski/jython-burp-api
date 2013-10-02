@@ -11,6 +11,9 @@ from java.awt import Color, Font, Point, Toolkit
 from java.awt.datatransfer import DataFlavor
 from java.awt.event import InputEvent, KeyEvent, WindowAdapter
 
+from java.lang import System
+from java.util import Properties
+
 from org.python.util import InteractiveInterpreter
 
 import sys
@@ -24,7 +27,8 @@ class Console(object):
 
     def __init__(self, burp, namespace=None):
         self.burp = burp
-        self._locals = {}
+        self.log = burp.log
+        self._locals = dict(Burp=burp)
         self._buffer = []
         self.history = History(self)
 
@@ -44,9 +48,9 @@ class Console(object):
         self.document.remove(0, self.document.getLength())
         self.write('Burp Extender Jython Shell', prefix='')
         self.write(self.PS1)
-        self.textpane.requestFocus()
 
-        self._locals['Burp'] = burp
+        self.textpane.requestFocus()
+        burp.log.info('Interactive interpreter ready...')
 
     @property
     def document(self):
@@ -254,7 +258,18 @@ class StdErrRedirector(object):
 
 
 class JythonInterpreter(InteractiveInterpreter):
-    def __init__(self, console, _locals):
+    def __init__(self, console, _locals, *args, **kwargs):
+        preProperties = System.getProperties()
+        postProperties = Properties()
+
+        console.log.debug('initializing interpreter with postProperties: %r',
+                          postProperties)
+
+        console.log.debug('Initializing interpreter with preProperties: %r',
+                          preProperties)
+
+        InteractiveInterpreter.initialize(preProperties, postProperties, args)
+
         InteractiveInterpreter.__init__(self, _locals)
         self.setOut(StdOutRedirector(self))
         self.setErr(StdErrRedirector(self))
@@ -262,4 +277,3 @@ class JythonInterpreter(InteractiveInterpreter):
 
     def write(self, data, color=Color.black):
         self.console.write(data.rstrip('\r\n'), color=color)
-
