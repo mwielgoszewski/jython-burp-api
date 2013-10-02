@@ -22,6 +22,11 @@ import site
 import sys
 import weakref
 
+# Patch dir this file was loaded from into the path
+# (Burp doesn't do it automatically)
+sys.path.append(os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe()))))
+
 from gds.burp import HttpRequest
 from gds.burp.config import Configuration, ConfigSection
 from gds.burp.core import Component, ComponentManager
