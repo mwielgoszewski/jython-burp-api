@@ -143,7 +143,25 @@ class BurpExtender(IBurpExtender, ComponentManager):
             self.log.exception('Could not load extension logging settings')
 
         try:
+            _, default_config = settings.CONFIG_FILENAME
             config = self.loadExtensionSetting(*settings.CONFIG_FILENAME)
+
+            if not os.path.exists(config):
+                self.log.error("%s does not exist!", config)
+
+                # look in parent directory
+                cwd = os.path.dirname(os.path.abspath(inspect.getfile(
+                    inspect.currentframe())))
+                pwd = os.path.dirname(cwd)
+
+                new_config = os.path.join(pwd, default_config)
+
+                if os.path.exists(new_config)
+                    config = new_config
+                    self.log.info("Found burp.ini in %s", config)
+                else:
+                    self.log.error("%s does not exist!", new_config)
+
             self.config = Configuration(os.path.abspath(config))
         except Exception:
             self.log.exception('Could not load extension config settings')
