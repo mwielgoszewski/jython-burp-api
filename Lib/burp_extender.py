@@ -156,7 +156,7 @@ class BurpExtender(IBurpExtender, ComponentManager):
 
                 new_config = os.path.join(pwd, default_config)
 
-                if os.path.exists(new_config)
+                if os.path.exists(new_config):
                     config = new_config
                     self.log.info("Found burp.ini in %s", config)
                 else:
