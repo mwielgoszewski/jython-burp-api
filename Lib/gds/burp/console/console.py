@@ -22,8 +22,10 @@ from .history import History
 
 
 class Console(object):
-    PS1 = sys.ps1
-    PS2 = sys.ps2
+    # PS1 = sys.ps1
+    # PS2 = sys.ps2
+    PS1 = ">>> "
+    PS2 = "... "
 
     def __init__(self, burp, namespace=None):
         self.burp = burp
